@@ -1,0 +1,8 @@
+{
+  "rewrites": [
+    { "source": "/invitation/view/:code", "destination": "/invitation/view/index.html" },
+    { "source": "/invitation/controller/:code", "destination": "/invitation/controller/index.html" },
+    { "source": "/view/:code", "destination": "/view/index.html" },
+    { "source": "/controller/:code", "destination": "/controller/index.html" }
+  ]
+}
