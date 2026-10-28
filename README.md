@@ -13,26 +13,28 @@
 
 **visionOS Web Simulator** es una experiencia web interactiva de alto rendimiento que recrea el entorno espacial, la estética de cristal (*glassmorphism*) y el sistema de interacción táctil/gestual de los **Apple Vision Pro**. 
 
-Permite ser controlado por webcam (MediaPipe Hands), mouse, control remoto nativo desde Android (*visionOS Controller APK*) o mediante comandos de chat en vivo de Twitch.
+Permite ser controlado por webcam (MediaPipe Hands), mouse, control remoto nativo desde Android (*visionOS Controller APK*), teclado virtual en pantalla o mediante comandos de chat en vivo de Twitch.
 
 ---
 
 ## 🔥 Características Principales
 
 - 🖐️ **Hand Tracking 60 FPS:** Navegación espacial por webcam detectando puntos de articulación manuales mediante **MediaPipe Hands**.
+- ⌨️ **Teclado Virtual Espacial:** Escribe en tiempo real usando únicamente los dedos y gestos de pinza (*pinch*), sin teclado físico.
+- 🖼️ **Estudio Inmersivo & Chroma Key (Green Screen):** Entorno espacial en 3D que recorta el fondo de tu cámara y te sitúa dentro de una habitación virtual interactiva.
+- 🔗 **Invitaciones de Control Remoto:** Generador de enlaces de sesión compartida tipo `/invitation/controller/<code>` y `/invitation/view/<code>`.
 - 📱 **Controlador Android Nativo (APK):** App en Kotlin/Jetpack Compose con trackpad multitáctil, corona digital interactiva, biometría y comunicación por IP local o USB.
 - 🎮 **Chat Use visionOS (Twitch Control):** Conexión IRC directa para que tus espectadores de Twitch jueguen y controlen las ventanas con comandos (`!youtube`, `!snake`, `!notes`, `!up`, `!down`, etc.).
 - 🐍 **Snake Arcade Pro:** Minijuego espacial integrado controlable por teclado, gestos o comandos del chat.
-- 🌐 **Sincronización IP Dinámica:** Enlace flexible por red Wi-Fi LAN o depuración ADB USB sin IPs estáticas hardcodeadas.
-- ✨ **Glassmorphism Avanzado:** Ventanas flotantes arrastrabiles con desenfoque de fondo en tiempo real (*backdrop-filter*).
+- ✨ **Glassmorphism Avanzado:** Ventanas flotantes arrastrables con desenfoque de fondo en tiempo real (*backdrop-filter*).
 
 ---
 
 ## ⚡ Inicio Rápido
 
 1. Visita la versión en vivo en [visionos-sim.vercel.app](https://visionos-sim.vercel.app/) o descarga este repositorio.
-2. Descarga e instala la app de Android desde las [GitHub Releases](https://github.com/anyelo888ra-ux/visionos-sim/releases).
-3. Conecta ambos dispositivos a la misma red Wi-Fi e introduce la IP de tu PC para sincronizar el control remoto.
+2. Abre el teclado flotante o la app de Invitaciones para controlar la interfaz sin hardware adicional.
+3. Descarga e instala la app de Android desde las [GitHub Releases](https://github.com/anyelo888ra-ux/visionos-sim/releases) si deseas usar tu smartphone como Trackpad Espacial.
 
 ---
 
@@ -40,7 +42,7 @@ Permite ser controlado por webcam (MediaPipe Hands), mouse, control remoto nativ
 
 ```text
 visionos-sim/
-├── index.html        # Simulador web completo (UI, MediaPipe, Twitch IRC y Snake)
+├── index.html        # Simulador web completo (UI, MediaPipe, Twitch IRC, Teclado Virtual y Chroma Studio)
 ├── favicon.svg       # Icono espacial del ecosistema
 ├── banner.svg        # Banner gráfico promocional para Twitter, Discord y OpenGraph
 ├── LICENSE           # Licencia MIT de código abierto
