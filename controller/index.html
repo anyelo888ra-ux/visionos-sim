@@ -14,9 +14,9 @@
 <body class="h-screen w-screen flex flex-col items-center justify-between p-6">
     <div class="glass w-full max-w-md p-4 rounded-2xl flex justify-between items-center text-xs">
         <span class="text-amber-400 font-bold flex items-center gap-2">
-            <i class="fa-solid fa-gamepad"></i> Control Activo
+            <i class="fa-solid fa-gamepad"></i> Control Activo: <span id="session-code" class="font-mono text-white bg-black/40 px-2 py-0.5 rounded">Cargando...</span>
         </span>
-        <button onclick="window.location.href='../'" class="text-white/50 hover:text-white">Salir</button>
+        <button onclick="window.location.href='../../'" class="text-white/50 hover:text-white">Salir</button>
     </div>
 
     <!-- Spatial Trackpad Area -->
@@ -25,7 +25,7 @@
         <span class="text-xs font-mono">Trackpad Táctil / Gestos Espaciales</span>
     </div>
 
-    <!-- Accesos Rápida -->
+    <!-- Accesos Rápidos -->
     <div class="grid grid-cols-4 gap-3 w-full max-w-md">
         <button class="glass p-3 rounded-2xl text-xs flex flex-col items-center gap-1 hover:bg-white/20">
             <i class="fa-solid fa-house text-sky-400"></i> Home
@@ -40,5 +40,11 @@
             <i class="fa-solid fa-gear text-slate-300"></i> Ajustes
         </button>
     </div>
+
+    <script>
+        const parts = window.location.pathname.split('/').filter(Boolean);
+        const code = parts[parts.length - 1] && parts[parts.length - 1] !== 'controller' ? parts[parts.length - 1] : 'xjtqgv99';
+        document.getElementById('session-code').textContent = code;
+    </script>
 </body>
 </html>
