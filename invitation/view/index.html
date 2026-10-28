@@ -19,11 +19,21 @@
         <div class="space-y-2">
             <h1 class="text-xl font-bold">Invitación de Espacio Virtual</h1>
             <p class="text-xs text-white/70">¿Estás seguro de que quieres ver lo que hace el usuario en su simulador visionOS?</p>
+            <p class="text-xs text-sky-300 font-mono mt-2">Código: <span id="session-code">...</span></p>
         </div>
         <div class="flex gap-3">
             <button onclick="window.location.href='../../'" class="flex-1 py-3 bg-white/10 hover:bg-white/20 rounded-xl text-xs font-semibold transition">No, salir</button>
-            <button onclick="window.location.href='../../view/'" class="flex-1 py-3 bg-sky-500 hover:bg-sky-400 text-black rounded-xl text-xs font-bold transition">Sí, ver ahora</button>
+            <button id="accept-btn" class="flex-1 py-3 bg-sky-500 hover:bg-sky-400 text-black rounded-xl text-xs font-bold transition">Sí, ver ahora</button>
         </div>
     </div>
+
+    <script>
+        const parts = window.location.pathname.split('/').filter(Boolean);
+        const code = parts[parts.length - 1] && parts[parts.length - 1] !== 'view' ? parts[parts.length - 1] : '96bb9ezw';
+        document.getElementById('session-code').textContent = code;
+        document.getElementById('accept-btn').onclick = () => {
+            window.location.href = `../../view/${code}`;
+        };
+    </script>
 </body>
 </html>
