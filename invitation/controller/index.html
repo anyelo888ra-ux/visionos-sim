@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Invitación de Control Remoto — visionOS Web</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+    <style>
+        body { background-color: #050508; color: #fff; font-family: system-ui, sans-serif; }
+        .glass { background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.2); }
+    </style>
+</head>
+<body class="h-screen w-screen flex items-center justify-center p-4">
+    <div class="glass max-w-md w-full p-8 rounded-3xl text-center space-y-6 shadow-2xl border-amber-500/30">
+        <div class="w-16 h-16 bg-amber-500/20 text-amber-400 rounded-2xl flex items-center justify-center text-3xl mx-auto border border-amber-500/30">
+            <i class="fa-solid fa-gamepad"></i>
+        </div>
+        <div class="space-y-2">
+            <h1 class="text-xl font-bold text-amber-400">⚠️ ADVERTENCIA DE CONTROL</h1>
+            <p class="text-xs text-white/90 uppercase tracking-wide font-semibold">ESTÁS A PUNTO DE CONTROLAR JUNTO A ALGUIEN SU SISTEMA.</p>
+            <p class="text-xs text-white/60">Cuida todo y no rompas nada durante la sesión compartida.</p>
+        </div>
+        <div class="flex gap-3">
+            <button onclick="window.location.href='../../'" class="flex-1 py-3 bg-white/10 hover:bg-white/20 rounded-xl text-xs font-semibold transition">Cancelar</button>
+            <button onclick="window.location.href='../../controller/'" class="flex-1 py-3 bg-amber-500 hover:bg-amber-400 text-black rounded-xl text-xs font-bold transition">Aceptar y Controlar</button>
+        </div>
+    </div>
+</body>
+</html>
