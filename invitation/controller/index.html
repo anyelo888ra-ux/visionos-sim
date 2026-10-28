@@ -20,11 +20,21 @@
             <h1 class="text-xl font-bold text-amber-400">⚠️ ADVERTENCIA DE CONTROL</h1>
             <p class="text-xs text-white/90 uppercase tracking-wide font-semibold">ESTÁS A PUNTO DE CONTROLAR JUNTO A ALGUIEN SU SISTEMA.</p>
             <p class="text-xs text-white/60">Cuida todo y no rompas nada durante la sesión compartida.</p>
+            <p class="text-xs text-amber-300 font-mono mt-2">Código: <span id="session-code">...</span></p>
         </div>
         <div class="flex gap-3">
             <button onclick="window.location.href='../../'" class="flex-1 py-3 bg-white/10 hover:bg-white/20 rounded-xl text-xs font-semibold transition">Cancelar</button>
-            <button onclick="window.location.href='../../controller/'" class="flex-1 py-3 bg-amber-500 hover:bg-amber-400 text-black rounded-xl text-xs font-bold transition">Aceptar y Controlar</button>
+            <button id="accept-btn" class="flex-1 py-3 bg-amber-500 hover:bg-amber-400 text-black rounded-xl text-xs font-bold transition">Aceptar y Controlar</button>
         </div>
     </div>
+
+    <script>
+        const parts = window.location.pathname.split('/').filter(Boolean);
+        const code = parts[parts.length - 1] && parts[parts.length - 1] !== 'controller' ? parts[parts.length - 1] : 'xjtqgv99';
+        document.getElementById('session-code').textContent = code;
+        document.getElementById('accept-btn').onclick = () => {
+            window.location.href = `../../controller/${code}`;
+        };
+    </script>
 </body>
 </html>
