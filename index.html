@@ -34,11 +34,20 @@
         }
 
         .vision-window {
-            background: rgba(20, 20, 25, 0.85);
+            background: rgba(20, 20, 25, 0.88);
             backdrop-filter: blur(30px) saturate(190%);
             -webkit-backdrop-filter: blur(30px) saturate(190%);
             border: 1px solid rgba(255, 255, 255, 0.15);
             box-shadow: 0 40px 80px rgba(0,0,0,0.6);
+            position: absolute;
+        }
+
+        /* Barra de agarre para arrastrar ventanas */
+        .window-header {
+            cursor: grab;
+        }
+        .window-header:active {
+            cursor: grabbing;
         }
 
         /* Cursor Espacial */
@@ -81,16 +90,30 @@
     </div>
 
     <!-- Menú Principal (Home Screen) -->
-    <div id="home-screen" class="vision-glass w-[720px] p-8 rounded-3xl z-30 flex flex-col items-center gap-6 shadow-2xl transition-all duration-300">
+    <div id="home-screen" class="vision-glass w-[740px] p-8 rounded-3xl z-30 flex flex-col items-center gap-6 shadow-2xl transition-all duration-300 absolute">
         
-        <div class="text-center space-y-1">
+        <div class="window-header w-full text-center space-y-1 cursor-grab">
             <h1 class="text-3xl font-extrabold tracking-tight text-white/90">visionOS Desktop Simulator</h1>
-            <p class="text-xs text-white/60">Usa tus dedos (Webcam) o el Mouse + Clic para interactuar</p>
+            <p class="text-xs text-white/60">Arrastra esta ventana desde aquí · Usa webcam o mouse</p>
         </div>
 
         <!-- Rejilla de Apps -->
-        <div class="grid grid-cols-4 gap-6 w-full my-2">
+        <div id="app-grid" class="grid grid-cols-4 gap-6 w-full my-2">
             
+            <button onclick="openApp('nexus')" class="flex flex-col items-center gap-2 group cursor-pointer">
+                <div class="w-16 h-16 rounded-2xl bg-gradient-to-tr from-purple-600 to-indigo-500 flex items-center justify-center text-2xl shadow-xl group-hover:scale-110 transition-transform">
+                    <i class="fa-solid fa-brain text-white"></i>
+                </div>
+                <span class="text-xs font-medium text-white/80">nexus.ai</span>
+            </button>
+
+            <button onclick="openApp('youtube')" class="flex flex-col items-center gap-2 group cursor-pointer">
+                <div class="w-16 h-16 rounded-2xl bg-gradient-to-tr from-red-600 to-rose-500 flex items-center justify-center text-2xl shadow-xl group-hover:scale-110 transition-transform">
+                    <i class="fa-brands fa-youtube text-white"></i>
+                </div>
+                <span class="text-xs font-medium text-white/80">YouTube</span>
+            </button>
+
             <button onclick="openApp('safari')" class="flex flex-col items-center gap-2 group cursor-pointer">
                 <div class="w-16 h-16 rounded-2xl bg-gradient-to-tr from-blue-600 to-sky-400 flex items-center justify-center text-2xl shadow-xl group-hover:scale-110 transition-transform">
                     <i class="fa-solid fa-compass text-white"></i>
@@ -132,13 +155,6 @@
                 </div>
                 <span class="text-xs font-medium text-white/80">Ajustes</span>
             </button>
-
-            <button onclick="openApp('sync')" class="flex flex-col items-center gap-2 group cursor-pointer">
-                <div class="w-16 h-16 rounded-2xl bg-black border border-white/20 flex items-center justify-center text-2xl shadow-xl group-hover:scale-110 transition-transform">
-                    <i class="fa-solid fa-display text-sky-400"></i>
-                </div>
-                <span class="text-xs font-medium text-white/80">iPhone Sync</span>
-            </button>
         </div>
 
         <div class="text-[11px] font-mono text-white/40 border-t border-white/10 pt-4 w-full text-center">
@@ -148,15 +164,52 @@
 
     <!-- VENTANAS FLOTANTES DE LAS APPS -->
 
-    <!-- 1. Safari Window (Con Buscador Real) -->
-    <div id="app-safari" class="vision-window hidden absolute w-[780px] h-[480px] rounded-3xl z-40 flex flex-col overflow-hidden shadow-2xl">
-        <div class="bg-white/10 px-5 py-3 flex justify-between items-center border-b border-white/10">
+    <!-- 1. nexus.ai Window (Asistente IA) -->
+    <div id="app-nexus" class="vision-window hidden w-[800px] h-[520px] rounded-3xl z-40 flex flex-col overflow-hidden shadow-2xl">
+        <div class="window-header bg-white/10 px-5 py-3 flex justify-between items-center border-b border-white/10">
+            <div class="flex items-center gap-2">
+                <div class="w-3 h-3 rounded-full bg-rose-500 cursor-pointer" onclick="closeApp('nexus')"></div>
+                <div class="w-3 h-3 rounded-full bg-amber-500"></div>
+                <div class="w-3 h-3 rounded-full bg-emerald-500"></div>
+            </div>
+            <div class="bg-black/40 px-4 py-1 rounded-full text-xs text-purple-300 font-mono flex items-center gap-2">
+                <i class="fa-solid fa-robot text-purple-400"></i> https://nexus.ai-nex.duckdns.org/
+            </div>
+            <i class="fa-solid fa-brain text-purple-400"></i>
+        </div>
+        <div class="flex-grow w-full h-full bg-black">
+            <iframe src="https://nexus.ai-nex.duckdns.org/" class="w-full h-full border-none"></iframe>
+        </div>
+    </div>
+
+    <!-- 2. YouTube Espacial -->
+    <div id="app-youtube" class="vision-window hidden w-[800px] h-[500px] rounded-3xl z-40 flex flex-col overflow-hidden shadow-2xl">
+        <div class="window-header bg-white/10 px-5 py-3 flex justify-between items-center border-b border-white/10">
+            <div class="flex items-center gap-2">
+                <div class="w-3 h-3 rounded-full bg-rose-500 cursor-pointer" onclick="closeApp('youtube')"></div>
+                <div class="w-3 h-3 rounded-full bg-amber-500"></div>
+                <div class="w-3 h-3 rounded-full bg-emerald-500"></div>
+            </div>
+            <div class="flex items-center gap-2 bg-black/40 px-3 py-1 rounded-full text-xs text-white/80 w-96 border border-white/10">
+                <i class="fa-brands fa-youtube text-red-500"></i>
+                <input id="yt-search-input" type="text" placeholder="Buscar video de YouTube..." class="bg-transparent border-none outline-none text-xs w-full text-white font-mono" onkeydown="if(event.key==='Enter') searchYouTube()">
+                <button onclick="searchYouTube()" class="text-red-400 hover:text-white"><i class="fa-solid fa-magnifying-glass"></i></button>
+            </div>
+            <i class="fa-brands fa-youtube text-red-500 text-lg"></i>
+        </div>
+        <div class="flex-grow w-full h-full bg-black flex items-center justify-center" id="yt-container">
+            <iframe id="yt-iframe" src="https://www.youtube.com/embed/jfKfPfyJRdk" class="w-full h-full border-none" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+        </div>
+    </div>
+
+    <!-- 3. Safari Window -->
+    <div id="app-safari" class="vision-window hidden w-[780px] h-[480px] rounded-3xl z-40 flex flex-col overflow-hidden shadow-2xl">
+        <div class="window-header bg-white/10 px-5 py-3 flex justify-between items-center border-b border-white/10">
             <div class="flex items-center gap-2">
                 <div class="w-3 h-3 rounded-full bg-rose-500 cursor-pointer" onclick="closeApp('safari')"></div>
                 <div class="w-3 h-3 rounded-full bg-amber-500"></div>
                 <div class="w-3 h-3 rounded-full bg-emerald-500"></div>
             </div>
-            <!-- Barra de Navegación Interactiva -->
             <div class="flex items-center gap-2 bg-black/40 px-3 py-1 rounded-full text-xs text-white/80 w-96 border border-white/10">
                 <i class="fa-solid fa-lock text-[10px] text-emerald-400"></i>
                 <input id="safari-url" type="text" value="https://google.com" class="bg-transparent border-none outline-none text-xs w-full text-white font-mono" onkeydown="if(event.key === 'Enter') navigateSafari()">
@@ -164,29 +217,25 @@
             </div>
             <i class="fa-solid fa-compass text-sky-400"></i>
         </div>
-        <div class="flex-grow bg-white text-black relative overflow-hidden flex flex-col">
-            <!-- Simulación de Google Search Integrado para evitar bloqueos x-frame -->
-            <div id="safari-browser-view" class="w-full h-full p-6 bg-slate-900 text-white flex flex-col items-center justify-center space-y-4">
-                <div class="flex items-center gap-3 text-3xl font-bold">
-                    <span class="text-blue-400">G</span><span class="text-red-400">o</span><span class="text-yellow-400">o</span><span class="text-blue-400">g</span><span class="text-green-400">l</span><span class="text-red-400">e</span>
-                    <span class="text-xs bg-sky-500/20 text-sky-300 border border-sky-500/30 px-2 py-0.5 rounded-full font-mono">Safari visionOS</span>
-                </div>
-                <div class="w-full max-w-md flex items-center bg-slate-800 border border-slate-700 rounded-full px-4 py-2">
-                    <i class="fa-solid fa-magnifying-glass text-slate-400 mr-2"></i>
-                    <input id="google-search-input" type="text" placeholder="Buscar en Google o escribir URL..." class="bg-transparent border-none outline-none text-xs w-full text-white" onkeydown="if(event.key==='Enter') searchGoogle()">
-                </div>
-                <div class="flex gap-2">
-                    <button onclick="searchGoogle()" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-xs rounded-lg border border-slate-700">Buscar en la Web</button>
-                    <a href="https://sm64.editor-64.duckdns.org/" target="_blank" class="px-4 py-2 bg-amber-500 hover:bg-amber-400 text-black text-xs font-bold rounded-lg">Editor 64</a>
-                </div>
-                <p id="safari-status" class="text-[11px] text-slate-400 font-mono">Safari Web Engine con bypass de protección de marcos activo.</p>
+        <div class="flex-grow bg-slate-900 text-white p-6 flex flex-col items-center justify-center space-y-4">
+            <div class="flex items-center gap-3 text-3xl font-bold">
+                <span class="text-blue-400">G</span><span class="text-red-400">o</span><span class="text-yellow-400">o</span><span class="text-blue-400">g</span><span class="text-green-400">l</span><span class="text-red-400">e</span>
+                <span class="text-xs bg-sky-500/20 text-sky-300 border border-sky-500/30 px-2 py-0.5 rounded-full font-mono">Safari visionOS</span>
+            </div>
+            <div class="w-full max-w-md flex items-center bg-slate-800 border border-slate-700 rounded-full px-4 py-2">
+                <i class="fa-solid fa-magnifying-glass text-slate-400 mr-2"></i>
+                <input id="google-search-input" type="text" placeholder="Buscar en Google..." class="bg-transparent border-none outline-none text-xs w-full text-white" onkeydown="if(event.key==='Enter') searchGoogle()">
+            </div>
+            <div class="flex gap-2">
+                <button onclick="searchGoogle()" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-xs rounded-lg border border-slate-700">Buscar en la Web</button>
+                <a href="https://sm64.editor-64.duckdns.org/" target="_blank" class="px-4 py-2 bg-amber-500 hover:bg-amber-400 text-black text-xs font-bold rounded-lg">Editor 64</a>
             </div>
         </div>
     </div>
 
-    <!-- 2. Fotos 3D Window -->
-    <div id="app-photos" class="vision-window hidden absolute w-[700px] h-[450px] rounded-3xl z-40 flex flex-col overflow-hidden shadow-2xl">
-        <div class="bg-white/10 px-5 py-3 flex justify-between items-center border-b border-white/10">
+    <!-- 4. Fotos 3D -->
+    <div id="app-photos" class="vision-window hidden w-[700px] h-[450px] rounded-3xl z-40 flex flex-col overflow-hidden shadow-2xl">
+        <div class="window-header bg-white/10 px-5 py-3 flex justify-between items-center border-b border-white/10">
             <div class="flex items-center gap-2">
                 <div class="w-3 h-3 rounded-full bg-rose-500 cursor-pointer" onclick="closeApp('photos')"></div>
                 <div class="w-3 h-3 rounded-full bg-amber-500"></div>
@@ -211,9 +260,9 @@
         </div>
     </div>
 
-    <!-- 3. App Notas Espaciales -->
-    <div id="app-notes" class="vision-window hidden absolute w-[600px] h-[400px] rounded-3xl z-40 flex flex-col overflow-hidden shadow-2xl">
-        <div class="bg-white/10 px-5 py-3 flex justify-between items-center border-b border-white/10">
+    <!-- 5. App Notas Espaciales -->
+    <div id="app-notes" class="vision-window hidden w-[600px] h-[400px] rounded-3xl z-40 flex flex-col overflow-hidden shadow-2xl">
+        <div class="window-header bg-white/10 px-5 py-3 flex justify-between items-center border-b border-white/10">
             <div class="flex items-center gap-2">
                 <div class="w-3 h-3 rounded-full bg-rose-500 cursor-pointer" onclick="closeApp('notes')"></div>
                 <div class="w-3 h-3 rounded-full bg-amber-500"></div>
@@ -227,9 +276,9 @@
         </div>
     </div>
 
-    <!-- 4. Archivos / Files -->
-    <div id="app-files" class="vision-window hidden absolute w-[650px] h-[420px] rounded-3xl z-40 flex flex-col overflow-hidden shadow-2xl">
-        <div class="bg-white/10 px-5 py-3 flex justify-between items-center border-b border-white/10">
+    <!-- 6. Archivos / Files -->
+    <div id="app-files" class="vision-window hidden w-[650px] h-[420px] rounded-3xl z-40 flex flex-col overflow-hidden shadow-2xl">
+        <div class="window-header bg-white/10 px-5 py-3 flex justify-between items-center border-b border-white/10">
             <div class="flex items-center gap-2">
                 <div class="w-3 h-3 rounded-full bg-rose-500 cursor-pointer" onclick="closeApp('files')"></div>
                 <div class="w-3 h-3 rounded-full bg-amber-500"></div>
@@ -241,7 +290,7 @@
         <div class="flex-grow p-6 space-y-2 text-xs">
             <div class="p-3 bg-white/5 border border-white/10 rounded-xl flex justify-between items-center">
                 <span class="flex items-center gap-2"><i class="fa-solid fa-file-code text-amber-400"></i> index.html</span>
-                <span class="text-white/40 font-mono">32 KB</span>
+                <span class="text-white/40 font-mono">35 KB</span>
             </div>
             <div class="p-3 bg-white/5 border border-white/10 rounded-xl flex justify-between items-center">
                 <span class="flex items-center gap-2"><i class="fa-solid fa-file-lines text-sky-400"></i> README.md</span>
@@ -250,9 +299,9 @@
         </div>
     </div>
 
-    <!-- 5. App Store -->
-    <div id="app-appstore" class="vision-window hidden absolute w-[680px] h-[440px] rounded-3xl z-40 flex flex-col overflow-hidden shadow-2xl">
-        <div class="bg-white/10 px-5 py-3 flex justify-between items-center border-b border-white/10">
+    <!-- 7. App Store (Con Descarga e Instalación Interna) -->
+    <div id="app-appstore" class="vision-window hidden w-[680px] h-[440px] rounded-3xl z-40 flex flex-col overflow-hidden shadow-2xl">
+        <div class="window-header bg-white/10 px-5 py-3 flex justify-between items-center border-b border-white/10">
             <div class="flex items-center gap-2">
                 <div class="w-3 h-3 rounded-full bg-rose-500 cursor-pointer" onclick="closeApp('appstore')"></div>
                 <div class="w-3 h-3 rounded-full bg-amber-500"></div>
@@ -261,27 +310,27 @@
             <span class="text-xs font-semibold">visionOS App Store</span>
             <i class="fa-solid fa-bag-shopping text-sky-400"></i>
         </div>
-        <div class="flex-grow p-6 grid grid-cols-2 gap-4">
+        <div class="flex-grow p-6 grid grid-cols-2 gap-4 overflow-y-auto">
             <div class="p-4 bg-white/5 border border-white/10 rounded-2xl flex flex-col justify-between">
                 <div>
-                    <h4 class="font-bold text-sm">Editor 64 Studio</h4>
-                    <p class="text-xs text-white/60">Crea niveles de SM64 en la web.</p>
+                    <h4 class="font-bold text-sm">Cartoon-Games</h4>
+                    <p class="text-xs text-white/60">Portal de minijuegos retro Flash/SWF.</p>
                 </div>
-                <a href="https://sm64.editor-64.duckdns.org/" target="_blank" class="mt-3 bg-sky-500 text-black text-xs font-bold py-2 rounded-xl text-center">Obtener</a>
+                <button onclick="installInternalApp('cartoon', 'Cartoon Games', 'fa-gamepad', 'from-amber-400 to-orange-500')" id="btn-install-cartoon" class="mt-3 bg-amber-400 text-black text-xs font-bold py-2 rounded-xl text-center">Instalar en OS</button>
             </div>
             <div class="p-4 bg-white/5 border border-white/10 rounded-2xl flex flex-col justify-between">
                 <div>
                     <h4 class="font-bold text-sm">TAS Speedrun 64</h4>
                     <p class="text-xs text-white/60">Telemetría de física en vivo.</p>
                 </div>
-                <a href="https://tas.speedrun-64.duckdns.org/" target="_blank" class="mt-3 bg-red-500 text-white text-xs font-bold py-2 rounded-xl text-center">Obtener</a>
+                <button onclick="installInternalApp('tas', 'TAS Speedrun', 'fa-stopwatch', 'from-red-600 to-rose-500')" id="btn-install-tas" class="mt-3 bg-red-500 text-white text-xs font-bold py-2 rounded-xl text-center">Instalar en OS</button>
             </div>
         </div>
     </div>
 
-    <!-- 6. Ajustes Window -->
-    <div id="app-settings" class="vision-window hidden absolute w-[600px] h-[400px] rounded-3xl z-40 flex flex-col overflow-hidden shadow-2xl">
-        <div class="bg-white/10 px-5 py-3 flex justify-between items-center border-b border-white/10">
+    <!-- 8. Ajustes Window -->
+    <div id="app-settings" class="vision-window hidden w-[600px] h-[400px] rounded-3xl z-40 flex flex-col overflow-hidden shadow-2xl">
+        <div class="window-header bg-white/10 px-5 py-3 flex justify-between items-center border-b border-white/10">
             <div class="flex items-center gap-2">
                 <div class="w-3 h-3 rounded-full bg-rose-500 cursor-pointer" onclick="closeApp('settings')"></div>
                 <div class="w-3 h-3 rounded-full bg-amber-500"></div>
@@ -296,15 +345,15 @@
                 <span class="text-sky-400 font-mono">Optimizada (640x480)</span>
             </div>
             <div class="flex justify-between items-center p-3 rounded-xl bg-white/5 border border-white/10">
-                <span>Efecto Glassmorphism / Blur</span>
+                <span>Arrastre de Ventanas (Spatial Drag)</span>
                 <span class="text-emerald-400 font-mono">Activado</span>
             </div>
         </div>
     </div>
 
-    <!-- 7. iPhone Sync Window -->
-    <div id="app-sync" class="vision-window hidden absolute w-[550px] h-[380px] rounded-3xl z-40 flex flex-col overflow-hidden shadow-2xl">
-        <div class="bg-white/10 px-5 py-3 flex justify-between items-center border-b border-white/10">
+    <!-- 9. iPhone Sync Window -->
+    <div id="app-sync" class="vision-window hidden w-[550px] h-[380px] rounded-3xl z-40 flex flex-col overflow-hidden shadow-2xl">
+        <div class="window-header bg-white/10 px-5 py-3 flex justify-between items-center border-b border-white/10">
             <div class="flex items-center gap-2">
                 <div class="w-3 h-3 rounded-full bg-rose-500 cursor-pointer" onclick="closeApp('sync')"></div>
                 <div class="w-3 h-3 rounded-full bg-amber-500"></div>
@@ -336,7 +385,7 @@
 
         let isPinching = false;
 
-        // MediaPipe Hands optimizado a baja resolución para fluidez total
+        // MediaPipe Hands
         const hands = new Hands({
             locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}`
         });
@@ -396,18 +445,68 @@
             if (element) element.click();
         }
 
-        // Navegación Safari
+        // Navegación YouTube & Safari
+        function searchYouTube() {
+            const query = document.getElementById('yt-search-input').value;
+            if(query) {
+                document.getElementById('yt-iframe').src = `https://www.youtube.com/embed?listType=search&list=${encodeURIComponent(query)}`;
+            }
+        }
+
         function searchGoogle() {
             const query = document.getElementById('google-search-input').value;
-            if(query) {
-                window.open(`https://www.google.com/search?q=${encodeURIComponent(query)}`, '_blank');
-            }
+            if(query) window.open(`https://www.google.com/search?q=${encodeURIComponent(query)}`, '_blank');
         }
 
         function navigateSafari() {
             const url = document.getElementById('safari-url').value;
-            if(url) {
-                window.open(url.startsWith('http') ? url : `https://${url}`, '_blank');
+            if(url) window.open(url.startsWith('http') ? url : `https://${url}`, '_blank');
+        }
+
+        // Sistema de Arrastre de Ventanas (Spatial Drag & Drop)
+        let activeDrag = null;
+        let dragOffsetX = 0, dragOffsetY = 0;
+
+        document.addEventListener('mousedown', (e) => {
+            const header = e.target.closest('.window-header');
+            if (header) {
+                activeDrag = header.closest('.vision-window, #home-screen');
+                const rect = activeDrag.getBoundingClientRect();
+                dragOffsetX = e.clientX - rect.left;
+                dragOffsetY = e.clientY - rect.top;
+            }
+        });
+
+        document.addEventListener('mousemove', (e) => {
+            if (activeDrag) {
+                activeDrag.style.left = `${e.clientX - dragOffsetX}px`;
+                activeDrag.style.top = `${e.clientY - dragOffsetY}px`;
+            }
+        });
+
+        document.addEventListener('mouseup', () => { activeDrag = null; });
+
+        // Instalación Interna de Apps en el OS
+        function installInternalApp(id, name, iconClass, bgGradient) {
+            if (document.getElementById(`app-btn-${id}`)) return;
+
+            const grid = document.getElementById('app-grid');
+            const btn = document.createElement('button');
+            btn.id = `app-btn-${id}`;
+            btn.className = "flex flex-col items-center gap-2 group cursor-pointer";
+            btn.onclick = () => alert(`Lanzando aplicación interna: ${name}`);
+            btn.innerHTML = `
+                <div class="w-16 h-16 rounded-2xl bg-gradient-to-tr ${bgGradient} flex items-center justify-center text-2xl shadow-xl group-hover:scale-110 transition-transform">
+                    <i class="fa-solid ${iconClass} text-white"></i>
+                </div>
+                <span class="text-xs font-medium text-white/80">${name}</span>
+            `;
+            grid.appendChild(btn);
+
+            const installBtn = document.getElementById(`btn-install-${id}`);
+            if (installBtn) {
+                installBtn.textContent = "Instalada";
+                installBtn.className = "mt-3 bg-emerald-500 text-white text-xs font-bold py-2 rounded-xl text-center";
             }
         }
 
@@ -416,8 +515,8 @@
             const app = document.getElementById(`app-${appName}`);
             if(app) {
                 app.classList.remove('hidden');
-                app.style.left = `${(window.innerWidth - 700) / 2 + (Math.random() * 40 - 20)}px`;
-                app.style.top = `${(window.innerHeight - 450) / 2 + (Math.random() * 40 - 20)}px`;
+                app.style.left = `${(window.innerWidth - app.offsetWidth) / 2 + (Math.random() * 40 - 20)}px`;
+                app.style.top = `${(window.innerHeight - app.offsetHeight) / 2 + (Math.random() * 40 - 20)}px`;
             }
         }
 
@@ -429,8 +528,8 @@
         function openSyncModal() { openApp('sync'); }
 
         function simulateSync() {
-            document.getElementById('sync-text').textContent = "Dispositivo Conectado (Remoto)";
-            alert("¡Dispositivo vinculado con éxito! Ya puedes usar tu teléfono como control.");
+            document.getElementById('sync-text').textContent = "Dispositivo Conectado";
+            alert("¡Dispositivo vinculado con éxito!");
             closeApp('sync');
         }
     </script>
