@@ -24,7 +24,6 @@
             user-select: none;
         }
 
-        /* Glassmorphism visionOS */
         .vision-glass {
             background: rgba(255, 255, 255, 0.12);
             backdrop-filter: blur(25px) saturate(180%);
@@ -42,7 +41,6 @@
             position: absolute;
         }
 
-        /* Barra de agarre para arrastrar ventanas */
         .window-header {
             cursor: grab;
         }
@@ -50,7 +48,6 @@
             cursor: grabbing;
         }
 
-        /* Cursor Espacial */
         #spatial-cursor {
             pointer-events: none;
             transition: transform 0.05s ease-out, background-color 0.15s ease;
@@ -89,12 +86,30 @@
         </button>
     </div>
 
+    <!-- WIDGET FLOTANTE DE TWITCH CHAT CONTROL -->
+    <div class="absolute bottom-6 left-6 z-40 vision-glass w-80 p-4 rounded-2xl flex flex-col gap-3 shadow-2xl">
+        <div class="flex justify-between items-center border-b border-white/10 pb-2">
+            <span class="text-xs font-bold flex items-center gap-2 text-purple-400">
+                <i class="fa-brands fa-twitch"></i> Chat Use visionOS
+            </span>
+            <span id="twitch-status" class="text-[10px] bg-amber-500/20 text-amber-300 px-2 py-0.5 rounded-full font-mono">Configurar Channel</span>
+        </div>
+        <div class="flex gap-2">
+            <input id="twitch-channel-input" type="text" placeholder="Tu canal de Twitch (ej: c00lkidd_v2yt)" class="bg-black/40 border border-white/10 rounded-xl px-3 py-1.5 text-xs text-white outline-none w-full font-mono">
+            <button onclick="connectTwitchChat()" class="bg-purple-600 hover:bg-purple-500 px-3 py-1.5 rounded-xl text-xs font-bold transition">Unir</button>
+        </div>
+        <!-- Feed en vivo de lo que hace el chat -->
+        <div id="twitch-log-box" class="h-24 bg-black/50 border border-white/10 rounded-xl p-2 overflow-y-auto text-[10px] font-mono space-y-1 text-white/70">
+            <div>[Sistema] Ingresa tu canal para conectar el chat...</div>
+        </div>
+    </div>
+
     <!-- Menú Principal (Home Screen) -->
     <div id="home-screen" class="vision-glass w-[740px] p-8 rounded-3xl z-30 flex flex-col items-center gap-6 shadow-2xl transition-all duration-300 absolute">
         
         <div class="window-header w-full text-center space-y-1 cursor-grab">
             <h1 class="text-3xl font-extrabold tracking-tight text-white/90">visionOS Desktop Simulator</h1>
-            <p class="text-xs text-white/60">Arrastra esta ventana desde aquí · Usa webcam o mouse</p>
+            <p class="text-xs text-white/60">Arrastra esta ventana desde aquí · Controlado por Web, APK o Twitch Chat</p>
         </div>
 
         <!-- Rejilla de Apps -->
@@ -114,11 +129,11 @@
                 <span class="text-xs font-medium text-white/80">YouTube</span>
             </button>
 
-            <button onclick="openApp('safari')" class="flex flex-col items-center gap-2 group cursor-pointer">
-                <div class="w-16 h-16 rounded-2xl bg-gradient-to-tr from-blue-600 to-sky-400 flex items-center justify-center text-2xl shadow-xl group-hover:scale-110 transition-transform">
-                    <i class="fa-solid fa-compass text-white"></i>
+            <button onclick="openApp('snake')" class="flex flex-col items-center gap-2 group cursor-pointer">
+                <div class="w-16 h-16 rounded-2xl bg-gradient-to-tr from-emerald-500 to-teal-600 flex items-center justify-center text-2xl shadow-xl group-hover:scale-110 transition-transform">
+                    <i class="fa-solid fa-gamepad text-white"></i>
                 </div>
-                <span class="text-xs font-medium text-white/80">Safari Web</span>
+                <span class="text-xs font-medium text-white/80">Snake Game</span>
             </button>
 
             <button onclick="openApp('photos')" class="flex flex-col items-center gap-2 group cursor-pointer">
@@ -158,13 +173,13 @@
         </div>
 
         <div class="text-[11px] font-mono text-white/40 border-t border-white/10 pt-4 w-full text-center">
-            Open Source visionOS Engine · Optimizado para PC y Web
+            Open Source visionOS Engine · Conexión Local Dinámica Activa
         </div>
     </div>
 
     <!-- VENTANAS FLOTANTES DE LAS APPS -->
 
-    <!-- 1. nexus.ai Window (Asistente IA) -->
+    <!-- 1. nexus.ai Window -->
     <div id="app-nexus" class="vision-window hidden w-[800px] h-[520px] rounded-3xl z-40 flex flex-col overflow-hidden shadow-2xl">
         <div class="window-header bg-white/10 px-5 py-3 flex justify-between items-center border-b border-white/10">
             <div class="flex items-center gap-2">
@@ -202,34 +217,21 @@
         </div>
     </div>
 
-    <!-- 3. Safari Window -->
-    <div id="app-safari" class="vision-window hidden w-[780px] h-[480px] rounded-3xl z-40 flex flex-col overflow-hidden shadow-2xl">
+    <!-- 3. Snake Game Espacial -->
+    <div id="app-snake" class="vision-window hidden w-[500px] h-[450px] rounded-3xl z-40 flex flex-col overflow-hidden shadow-2xl">
         <div class="window-header bg-white/10 px-5 py-3 flex justify-between items-center border-b border-white/10">
             <div class="flex items-center gap-2">
-                <div class="w-3 h-3 rounded-full bg-rose-500 cursor-pointer" onclick="closeApp('safari')"></div>
+                <div class="w-3 h-3 rounded-full bg-rose-500 cursor-pointer" onclick="closeApp('snake')"></div>
                 <div class="w-3 h-3 rounded-full bg-amber-500"></div>
                 <div class="w-3 h-3 rounded-full bg-emerald-500"></div>
             </div>
-            <div class="flex items-center gap-2 bg-black/40 px-3 py-1 rounded-full text-xs text-white/80 w-96 border border-white/10">
-                <i class="fa-solid fa-lock text-[10px] text-emerald-400"></i>
-                <input id="safari-url" type="text" value="https://google.com" class="bg-transparent border-none outline-none text-xs w-full text-white font-mono" onkeydown="if(event.key === 'Enter') navigateSafari()">
-                <button onclick="navigateSafari()" class="text-sky-400 hover:text-white"><i class="fa-solid fa-arrow-right"></i></button>
-            </div>
-            <i class="fa-solid fa-compass text-sky-400"></i>
+            <span class="text-xs font-semibold">Snake visionOS (Chat Controlable)</span>
+            <i class="fa-solid fa-gamepad text-emerald-400"></i>
         </div>
-        <div class="flex-grow bg-slate-900 text-white p-6 flex flex-col items-center justify-center space-y-4">
-            <div class="flex items-center gap-3 text-3xl font-bold">
-                <span class="text-blue-400">G</span><span class="text-red-400">o</span><span class="text-yellow-400">o</span><span class="text-blue-400">g</span><span class="text-green-400">l</span><span class="text-red-400">e</span>
-                <span class="text-xs bg-sky-500/20 text-sky-300 border border-sky-500/30 px-2 py-0.5 rounded-full font-mono">Safari visionOS</span>
-            </div>
-            <div class="w-full max-w-md flex items-center bg-slate-800 border border-slate-700 rounded-full px-4 py-2">
-                <i class="fa-solid fa-magnifying-glass text-slate-400 mr-2"></i>
-                <input id="google-search-input" type="text" placeholder="Buscar en Google..." class="bg-transparent border-none outline-none text-xs w-full text-white" onkeydown="if(event.key==='Enter') searchGoogle()">
-            </div>
-            <div class="flex gap-2">
-                <button onclick="searchGoogle()" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-xs rounded-lg border border-slate-700">Buscar en la Web</button>
-                <a href="https://sm64.editor-64.duckdns.org/" target="_blank" class="px-4 py-2 bg-amber-500 hover:bg-amber-400 text-black text-xs font-bold rounded-lg">Editor 64</a>
-            </div>
+        <div class="flex-grow bg-black p-4 flex flex-col items-center justify-center relative">
+            <div class="absolute top-3 left-4 text-xs font-mono text-emerald-400">Puntuación: <span id="snake-score">0</span></div>
+            <canvas id="snake-canvas" width="360" height="360" class="bg-slate-900 border border-white/20 rounded-xl shadow-lg"></canvas>
+            <div class="text-[10px] text-white/50 mt-2">Usa las flechas del teclado o el chat de Twitch (!up, !down, !left, !right)</div>
         </div>
     </div>
 
@@ -290,7 +292,7 @@
         <div class="flex-grow p-6 space-y-2 text-xs">
             <div class="p-3 bg-white/5 border border-white/10 rounded-xl flex justify-between items-center">
                 <span class="flex items-center gap-2"><i class="fa-solid fa-file-code text-amber-400"></i> index.html</span>
-                <span class="text-white/40 font-mono">35 KB</span>
+                <span class="text-white/40 font-mono">38 KB</span>
             </div>
             <div class="p-3 bg-white/5 border border-white/10 rounded-xl flex justify-between items-center">
                 <span class="flex items-center gap-2"><i class="fa-solid fa-file-lines text-sky-400"></i> README.md</span>
@@ -322,17 +324,10 @@
             </div>
             <div class="p-4 bg-white/5 border border-white/10 rounded-2xl flex flex-col justify-between">
                 <div>
-                    <h4 class="font-bold text-sm">Cartoon-Games</h4>
-                    <p class="text-xs text-white/60">Portal de minijuegos retro Flash/SWF.</p>
+                    <h4 class="font-bold text-sm">Snake Arcade Pro</h4>
+                    <p class="text-xs text-white/60">Juego clásico interactivo por chat.</p>
                 </div>
-                <button onclick="installInternalApp('cartoon', 'Cartoon Games', 'fa-gamepad', 'from-amber-400 to-orange-500')" id="btn-install-cartoon" class="mt-3 bg-amber-400 text-black text-xs font-bold py-2 rounded-xl text-center">Instalar en OS</button>
-            </div>
-            <div class="p-4 bg-white/5 border border-white/10 rounded-2xl flex flex-col justify-between">
-                <div>
-                    <h4 class="font-bold text-sm">TAS Speedrun 64</h4>
-                    <p class="text-xs text-white/60">Telemetría de física en vivo.</p>
-                </div>
-                <button onclick="installInternalApp('tas', 'TAS Speedrun', 'fa-stopwatch', 'from-red-600 to-rose-500')" id="btn-install-tas" class="mt-3 bg-red-500 text-white text-xs font-bold py-2 rounded-xl text-center">Instalar en OS</button>
+                <button onclick="openApp('snake')" class="mt-3 bg-emerald-500 text-black text-xs font-bold py-2 rounded-xl text-center">Jugar Ahora</button>
             </div>
         </div>
     </div>
@@ -345,17 +340,17 @@
                 <div class="w-3 h-3 rounded-full bg-amber-500"></div>
                 <div class="w-3 h-3 rounded-full bg-emerald-500"></div>
             </div>
-            <span class="text-xs font-semibold">Ajustes del Simulador</span>
+            <span class="text-xs font-semibold">Ajustes del Simulador y Red Local</span>
             <i class="fa-solid fa-gear text-slate-300"></i>
         </div>
         <div class="flex-grow p-6 space-y-4 overflow-y-auto text-xs">
             <div class="flex justify-between items-center p-3 rounded-xl bg-white/5 border border-white/10">
-                <span>Calidad de Hand Tracking (MediaPipe)</span>
-                <span class="text-sky-400 font-mono">Optimizada (640x480)</span>
+                <span>Configurar IP Local de tu PC (para APK)</span>
+                <input id="custom-ip-input" type="text" placeholder="Ej: 192.168.1.X" class="bg-black/50 border border-white/20 rounded-lg px-3 py-1 text-white font-mono text-xs w-36 outline-none" onchange="updateLocalIP(this.value)">
             </div>
             <div class="flex justify-between items-center p-3 rounded-xl bg-white/5 border border-white/10">
-                <span>Arrastre de Ventanas (Spatial Drag)</span>
-                <span class="text-emerald-400 font-mono">Activado</span>
+                <span>Calidad de Hand Tracking (MediaPipe)</span>
+                <span class="text-sky-400 font-mono">Optimizada (640x480)</span>
             </div>
         </div>
     </div>
@@ -368,7 +363,7 @@
                 <div class="w-3 h-3 rounded-full bg-amber-500"></div>
                 <div class="w-3 h-3 rounded-full bg-emerald-500"></div>
             </div>
-            <span class="text-xs font-semibold">visionOS Controller Sync</span>
+            <span class="text-xs font-semibold">visionOS Controller Sync (Local Dinámico)</span>
             <i class="fa-solid fa-mobile-screen-button text-sky-400"></i>
         </div>
         <div class="flex-grow p-6 flex flex-col items-center justify-between text-center space-y-4">
@@ -379,18 +374,18 @@
 
             <div class="space-y-1">
                 <h3 class="font-bold text-sm">Control Remoto por Red Local o USB</h3>
-                <p class="text-xs text-white/60">Usa la app de Android para transformar tu teléfono en un trackpad táctil con gestos espaciales.</p>
+                <p class="text-xs text-white/60">Introduce la IP local real de tu PC para que la app conecte al vuelo.</p>
             </div>
 
-            <!-- Opciones de Estado de Conexión -->
-            <div class="w-full bg-white/5 border border-white/10 rounded-2xl p-4 space-y-2 text-xs text-left">
+            <!-- Opciones de Estado de Conexión Dinámico -->
+            <div class="w-full bg-white/5 border border-white/10 rounded-2xl p-4 space-y-3 text-xs text-left">
                 <div class="flex justify-between items-center">
-                    <span class="text-white/70"><i class="fa-solid fa-wifi text-sky-400 mr-2"></i> Estado Wi-Fi Local:</span>
-                    <span class="font-mono text-emerald-400 font-bold" id="status-wifi">Esperando IP...</span>
+                    <span class="text-white/70"><i class="fa-solid fa-wifi text-sky-400 mr-2"></i> IP Local Dinámica:</span>
+                    <input id="modal-ip-input" type="text" value="192.168.1.50" class="bg-black/50 border border-white/20 rounded-lg px-2 py-1 text-emerald-400 font-mono text-xs w-32 outline-none text-center" onchange="updateLocalIP(this.value)">
                 </div>
                 <div class="flex justify-between items-center">
                     <span class="text-white/70"><i class="fa-brands fa-usb text-amber-400 mr-2"></i> Modo USB (ADB):</span>
-                    <span class="font-mono text-amber-400 font-bold" id="status-usb">Puerto 8080 listo</span>
+                    <span class="font-mono text-amber-400 font-bold">Puerto 8080 listo</span>
                 </div>
             </div>
 
@@ -400,7 +395,7 @@
                     <i class="fa-brands fa-android text-emerald-400 text-sm"></i> Descargar APK (Releases)
                 </a>
                 <button onclick="simulateSync()" class="flex-1 bg-sky-600 hover:bg-sky-500 text-white font-bold py-2.5 rounded-xl text-xs transition">
-                    Vincular Dispositivo
+                    Sincronizar IP
                 </button>
             </div>
         </div>
@@ -414,6 +409,16 @@
         const modeText = document.getElementById('mode-text');
 
         let isPinching = false;
+        let localDeviceIP = "192.168.1.50"; // IP dinámica actualizable
+
+        function updateLocalIP(newIp) {
+            if(newIp) {
+                localDeviceIP = newIp;
+                document.getElementById('status-wifi').textContent = `${localDeviceIP} (Conectado)`;
+                document.getElementById('custom-ip-input').value = localDeviceIP;
+                document.getElementById('modal-ip-input').value = localDeviceIP;
+            }
+        }
 
         // MediaPipe Hands
         const hands = new Hands({
@@ -427,7 +432,7 @@
             .then((stream) => {
                 videoElement.srcObject = stream;
                 modeIcon.className = "fa-solid fa-hand text-emerald-400";
-                modeText.textContent = "Hand Tracking Activo (Cámara 60 FPS)";
+                modeText.textContent = "Hand Tracking Activo (60 FPS)";
 
                 const camera = new Camera(videoElement, {
                     onFrame: async () => { await hands.send({ image: videoElement }); },
@@ -475,22 +480,12 @@
             if (element) element.click();
         }
 
-        // Navegación YouTube & Safari
+        // Navegación YouTube
         function searchYouTube() {
             const query = document.getElementById('yt-search-input').value;
             if(query) {
                 document.getElementById('yt-iframe').src = `https://www.youtube.com/embed?listType=search&list=${encodeURIComponent(query)}`;
             }
-        }
-
-        function searchGoogle() {
-            const query = document.getElementById('google-search-input').value;
-            if(query) window.open(`https://www.google.com/search?q=${encodeURIComponent(query)}`, '_blank');
-        }
-
-        function navigateSafari() {
-            const url = document.getElementById('safari-url').value;
-            if(url) window.open(url.startsWith('http') ? url : `https://${url}`, '_blank');
         }
 
         // Sistema de Arrastre de Ventanas (Spatial Drag & Drop)
@@ -516,30 +511,6 @@
 
         document.addEventListener('mouseup', () => { activeDrag = null; });
 
-        // Instalación Interna de Apps en el OS
-        function installInternalApp(id, name, iconClass, bgGradient) {
-            if (document.getElementById(`app-btn-${id}`)) return;
-
-            const grid = document.getElementById('app-grid');
-            const btn = document.createElement('button');
-            btn.id = `app-btn-${id}`;
-            btn.className = "flex flex-col items-center gap-2 group cursor-pointer";
-            btn.onclick = () => alert(`Lanzando aplicación interna: ${name}`);
-            btn.innerHTML = `
-                <div class="w-16 h-16 rounded-2xl bg-gradient-to-tr ${bgGradient} flex items-center justify-center text-2xl shadow-xl group-hover:scale-110 transition-transform">
-                    <i class="fa-solid ${iconClass} text-white"></i>
-                </div>
-                <span class="text-xs font-medium text-white/80">${name}</span>
-            `;
-            grid.appendChild(btn);
-
-            const installBtn = document.getElementById(`btn-install-${id}`);
-            if (installBtn) {
-                installBtn.textContent = "Instalada";
-                installBtn.className = "mt-3 bg-emerald-500 text-white text-xs font-bold py-2 rounded-xl text-center";
-            }
-        }
-
         // Gestión de Ventanas Espaciales
         function openApp(appName) {
             const app = document.getElementById(`app-${appName}`);
@@ -547,6 +518,7 @@
                 app.classList.remove('hidden');
                 app.style.left = `${(window.innerWidth - app.offsetWidth) / 2 + (Math.random() * 40 - 20)}px`;
                 app.style.top = `${(window.innerHeight - app.offsetHeight) / 2 + (Math.random() * 40 - 20)}px`;
+                if(appName === 'snake') initSnakeGame();
             }
         }
 
@@ -558,10 +530,131 @@
         function openSyncModal() { openApp('sync'); }
 
         function simulateSync() {
-            document.getElementById('status-wifi').textContent = "192.168.1.50 (Conectado)";
-            document.getElementById('sync-text').textContent = "Dispositivo Conectado";
-            alert("¡Dispositivo Android vinculado con éxito mediante visionOS Controller!");
+            alert(`¡IP ${localDeviceIP} sincronizada con éxito para el APK Android!`);
             closeApp('sync');
+        }
+
+        // MINIJUEGO SNAKE ESPACIAL
+        let snakeCanvas = document.getElementById('snake-canvas');
+        let snakeCtx = snakeCanvas ? snakeCanvas.getContext('2d') : null;
+        let snake = [{x: 10, y: 10}];
+        let food = {x: 5, y: 5};
+        let dx = 1, dy = 0;
+        let snakeScore = 0;
+        let snakeInterval = null;
+
+        function initSnakeGame() {
+            if(snakeInterval) clearInterval(snakeInterval);
+            snake = [{x: 10, y: 10}];
+            snakeScore = 0;
+            document.getElementById('snake-score').textContent = snakeScore;
+            spawnFood();
+            snakeInterval = setInterval(updateSnake, 120);
+        }
+
+        function spawnFood() {
+            food = { x: Math.floor(Math.random() * 18), y: Math.floor(Math.random() * 18) };
+        }
+
+        function updateSnake() {
+            if(!snakeCtx) return;
+            const head = {x: snake[0].x + dx, y: snake[0].y + dy};
+            
+            if(head.x < 0 || head.x >= 18 || head.y < 0 || head.y >= 18 || snake.some(s => s.x === head.x && s.y === head.y)) {
+                alert('¡Juego Terminado en Snake!');
+                initSnakeGame();
+                return;
+            }
+
+            snake.unshift(head);
+            if(head.x === food.x && head.y === food.y) {
+                snakeScore += 10;
+                document.getElementById('snake-score').textContent = snakeScore;
+                spawnFood();
+            } else {
+                snake.pop();
+            }
+
+            // Render
+            snakeCtx.fillStyle = '#050508';
+            snakeCtx.fillRect(0, 0, 360, 360);
+
+            // Dibujar comida
+            snakeCtx.fillStyle = '#f43f5e';
+            snakeCtx.fillRect(food.x * 20, food.y * 20, 18, 18);
+
+            // Dibujar serpiente
+            snakeCtx.fillStyle = '#38bdf8';
+            snake.forEach(part => {
+                snakeCtx.fillRect(part.x * 20, part.y * 20, 18, 18);
+            });
+        }
+
+        window.addEventListener('keydown', e => {
+            if(e.key === 'ArrowUp' && dy === 0) { dx = 0; dy = -1; }
+            if(e.key === 'ArrowDown' && dy === 0) { dx = 0; dy = 1; }
+            if(e.key === 'ArrowLeft' && dx === 0) { dx = -1; dy = 0; }
+            if(e.key === 'ArrowRight' && dx === 0) { dx = 1; dy = 0; }
+        });
+
+        // INTEGRACIÓN DE TWITCH CHAT CONTROL ("Chat Use visionOS")
+        function connectTwitchChat() {
+            const channel = document.getElementById('twitch-channel-input').value.trim().toLowerCase();
+            if(!channel) {
+                alert("Por favor ingresa un nombre de canal de Twitch válido.");
+                return;
+            }
+
+            document.getElementById('twitch-status').textContent = `Conectado: #${channel}`;
+            document.getElementById('twitch-status').className = "text-[10px] bg-emerald-500/20 text-emerald-300 px-2 py-0.5 rounded-full font-mono";
+            
+            const logBox = document.getElementById('twitch-log-box');
+            logBox.innerHTML += `<div>[Twitch] Conectado al chat de #${channel}</div>`;
+
+            // Simulación en tiempo real de conexión WebSocket IRC a Twitch Chat público
+            const ws = new WebSocket('wss://irc-ws.chat.twitch.tv:443');
+
+            ws.onopen = () => {
+                ws.send('PASS SCHOOT');
+                ws.send(`NICK justinfan${Math.floor(Math.random() * 80000)}`);
+                ws.send(`JOIN #${channel}`);
+                logBox.innerHTML += `<div>[IRC] Escuchando comandos del chat...</div>`;
+            };
+
+            ws.onmessage = (event) => {
+                const message = event.data;
+                if (message.includes('PRIVMSG')) {
+                    const parts = message.split(':');
+                    const userAndHost = parts[1].split('!')[0];
+                    const chatText = parts.slice(2).join(':').trim().toLowerCase();
+
+                    logBox.innerHTML += `<div><b>${userAndHost}:</b> ${chatText}</div>`;
+                    logBox.scrollTop = logBox.scrollHeight;
+
+                    // Procesar comandos del chat para controlar el simulador
+                    if (chatText.includes('!youtube') || chatText.includes('!yt')) {
+                        openApp('youtube');
+                        logBox.innerHTML += `<div class="text-sky-400">[Acción] Chat abrió YouTube</div>`;
+                    } else if (chatText.includes('!snake')) {
+                        openApp('snake');
+                        logBox.innerHTML += `<div class="text-emerald-400">[Acción] Chat abrió Snake</div>`;
+                    } else if (chatText.includes('!notes')) {
+                        openApp('notes');
+                        logBox.innerHTML += `<div class="text-yellow-400">[Acción] Chat abrió Notas</div>`;
+                    } else if (chatText.includes('!home')) {
+                        closeApp('youtube'); closeApp('snake'); closeApp('notes'); closeApp('nexus');
+                        logBox.innerHTML += `<div class="text-purple-400">[Acción] Chat cerró ventanas</div>`;
+                    } else if (chatText.includes('!up')) {
+                        if(dy === 0) { dx = 0; dy = -1; }
+                    } else if (chatText.includes('!down')) {
+                        if(dy === 0) { dx = 0; dy = 1; }
+                    } else if (chatText.includes('!left')) {
+                        if(dx === 0) { dx = -1; dy = 0; }
+                    } else if (chatText.includes('!right')) {
+                        if(dx === 0) { dx = 1; dy = 0; }
+                    }
+                }
+            };
         }
     </script>
 </body>
