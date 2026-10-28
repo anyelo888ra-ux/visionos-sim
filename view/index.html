@@ -14,7 +14,7 @@
 <body class="h-screen w-screen flex flex-col items-center justify-center relative">
     <div class="absolute top-6 left-6 glass px-4 py-2 rounded-full text-xs font-mono text-sky-400 flex items-center gap-2">
         <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-        Conectado a Transmisión Espacial
+        Transmisión Espacial: <span id="session-code" class="text-white font-mono bg-black/40 px-2 py-0.5 rounded">Cargando...</span>
     </div>
     
     <div class="text-center space-y-4">
@@ -24,5 +24,11 @@
         <h2 class="text-2xl font-bold">Viendo Sesión en Vivo</h2>
         <p class="text-xs text-white/50 font-mono">Esperando flujo de renderizado del anfitrión...</p>
     </div>
+
+    <script>
+        const parts = window.location.pathname.split('/').filter(Boolean);
+        const code = parts[parts.length - 1] && parts[parts.length - 1] !== 'view' ? parts[parts.length - 1] : '96bb9ezw';
+        document.getElementById('session-code').textContent = code;
+    </script>
 </body>
-</html> 
+</html>
