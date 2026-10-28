@@ -5,6 +5,24 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>visionOS Web Simulator — Apple Vision Pro Experience</title>
     
+    <!-- Favicon SVG & Iconos -->
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <link rel="apple-touch-icon" href="favicon.svg">
+
+    <!-- Embed & Meta Tags (Open Graph / Discord / Twitter Cards) -->
+    <meta name="title" content="visionOS Web Simulator — Spatial Web Experience">
+    <meta name="description" content="Simulador interactivo de visionOS con Hand Tracking (MediaPipe), control remoto desde Android (APK), Snake Arcade y Twitch Chat Integration.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://visionos-sim.vercel.app/">
+    <meta property="og:title" content="visionOS Web Simulator — Apple Vision Pro Experience">
+    <meta property="og:description" content="Simulador interactivo de visionOS con Hand Tracking (MediaPipe), control remoto desde Android (APK), Snake Arcade y Twitch Chat Integration.">
+    <meta property="og:image" content="banner.svg">
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://visionos-sim.vercel.app/">
+    <meta property="twitter:title" content="visionOS Web Simulator — Spatial Web Experience">
+    <meta property="twitter:description" content="Simulador interactivo de visionOS con Hand Tracking, APK Android Remote, Snake Game y Twitch Chat Control.">
+    <meta property="twitter:image" content="banner.svg">
+    
     <!-- Tailwind CSS & FontAwesome -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
@@ -98,7 +116,6 @@
             <input id="twitch-channel-input" type="text" placeholder="Tu canal de Twitch (ej: c00lkidd_v2yt)" class="bg-black/40 border border-white/10 rounded-xl px-3 py-1.5 text-xs text-white outline-none w-full font-mono">
             <button onclick="connectTwitchChat()" class="bg-purple-600 hover:bg-purple-500 px-3 py-1.5 rounded-xl text-xs font-bold transition">Unir</button>
         </div>
-        <!-- Feed en vivo de lo que hace el chat -->
         <div id="twitch-log-box" class="h-24 bg-black/50 border border-white/10 rounded-xl p-2 overflow-y-auto text-[10px] font-mono space-y-1 text-white/70">
             <div>[Sistema] Ingresa tu canal para conectar el chat...</div>
         </div>
@@ -112,9 +129,7 @@
             <p class="text-xs text-white/60">Arrastra esta ventana desde aquí · Controlado por Web, APK o Twitch Chat</p>
         </div>
 
-        <!-- Rejilla de Apps -->
         <div id="app-grid" class="grid grid-cols-4 gap-6 w-full my-2">
-            
             <button onclick="openApp('nexus')" class="flex flex-col items-center gap-2 group cursor-pointer">
                 <div class="w-16 h-16 rounded-2xl bg-gradient-to-tr from-purple-600 to-indigo-500 flex items-center justify-center text-2xl shadow-xl group-hover:scale-110 transition-transform">
                     <i class="fa-solid fa-brain text-white"></i>
@@ -177,9 +192,7 @@
         </div>
     </div>
 
-    <!-- VENTANAS FLOTANTES DE LAS APPS -->
-
-    <!-- 1. nexus.ai Window -->
+    <!-- APPS Y VENTANAS -->
     <div id="app-nexus" class="vision-window hidden w-[800px] h-[520px] rounded-3xl z-40 flex flex-col overflow-hidden shadow-2xl">
         <div class="window-header bg-white/10 px-5 py-3 flex justify-between items-center border-b border-white/10">
             <div class="flex items-center gap-2">
@@ -197,7 +210,6 @@
         </div>
     </div>
 
-    <!-- 2. YouTube Espacial -->
     <div id="app-youtube" class="vision-window hidden w-[800px] h-[500px] rounded-3xl z-40 flex flex-col overflow-hidden shadow-2xl">
         <div class="window-header bg-white/10 px-5 py-3 flex justify-between items-center border-b border-white/10">
             <div class="flex items-center gap-2">
@@ -217,7 +229,6 @@
         </div>
     </div>
 
-    <!-- 3. Snake Game Espacial -->
     <div id="app-snake" class="vision-window hidden w-[500px] h-[450px] rounded-3xl z-40 flex flex-col overflow-hidden shadow-2xl">
         <div class="window-header bg-white/10 px-5 py-3 flex justify-between items-center border-b border-white/10">
             <div class="flex items-center gap-2">
@@ -235,7 +246,6 @@
         </div>
     </div>
 
-    <!-- 4. Fotos 3D -->
     <div id="app-photos" class="vision-window hidden w-[700px] h-[450px] rounded-3xl z-40 flex flex-col overflow-hidden shadow-2xl">
         <div class="window-header bg-white/10 px-5 py-3 flex justify-between items-center border-b border-white/10">
             <div class="flex items-center gap-2">
@@ -262,7 +272,6 @@
         </div>
     </div>
 
-    <!-- 5. App Notas Espaciales -->
     <div id="app-notes" class="vision-window hidden w-[600px] h-[400px] rounded-3xl z-40 flex flex-col overflow-hidden shadow-2xl">
         <div class="window-header bg-white/10 px-5 py-3 flex justify-between items-center border-b border-white/10">
             <div class="flex items-center gap-2">
@@ -278,7 +287,6 @@
         </div>
     </div>
 
-    <!-- 6. Archivos / Files -->
     <div id="app-files" class="vision-window hidden w-[650px] h-[420px] rounded-3xl z-40 flex flex-col overflow-hidden shadow-2xl">
         <div class="window-header bg-white/10 px-5 py-3 flex justify-between items-center border-b border-white/10">
             <div class="flex items-center gap-2">
@@ -301,7 +309,6 @@
         </div>
     </div>
 
-    <!-- 7. App Store -->
     <div id="app-appstore" class="vision-window hidden w-[680px] h-[440px] rounded-3xl z-40 flex flex-col overflow-hidden shadow-2xl">
         <div class="window-header bg-white/10 px-5 py-3 flex justify-between items-center border-b border-white/10">
             <div class="flex items-center gap-2">
@@ -332,7 +339,6 @@
         </div>
     </div>
 
-    <!-- 8. Ajustes Window -->
     <div id="app-settings" class="vision-window hidden w-[600px] h-[400px] rounded-3xl z-40 flex flex-col overflow-hidden shadow-2xl">
         <div class="window-header bg-white/10 px-5 py-3 flex justify-between items-center border-b border-white/10">
             <div class="flex items-center gap-2">
@@ -355,7 +361,6 @@
         </div>
     </div>
 
-    <!-- 9. Dispositivo / visionOS Controller Sync Window -->
     <div id="app-sync" class="vision-window hidden w-[580px] h-[440px] rounded-3xl z-40 flex flex-col overflow-hidden shadow-2xl">
         <div class="window-header bg-white/10 px-5 py-3 flex justify-between items-center border-b border-white/10">
             <div class="flex items-center gap-2">
@@ -377,7 +382,6 @@
                 <p class="text-xs text-white/60">Introduce la IP local real de tu PC para que la app conecte al vuelo.</p>
             </div>
 
-            <!-- Opciones de Estado de Conexión Dinámico -->
             <div class="w-full bg-white/5 border border-white/10 rounded-2xl p-4 space-y-3 text-xs text-left">
                 <div class="flex justify-between items-center">
                     <span class="text-white/70"><i class="fa-solid fa-wifi text-sky-400 mr-2"></i> IP Local Dinámica:</span>
@@ -389,7 +393,6 @@
                 </div>
             </div>
 
-            <!-- Botones de Acción -->
             <div class="flex gap-3 w-full">
                 <a href="https://github.com/anyelo888ra-ux/visionos-sim/releases" target="_blank" class="flex-1 bg-white/10 hover:bg-white/20 border border-white/20 text-white font-bold py-2.5 rounded-xl text-xs flex items-center justify-center gap-2 transition">
                     <i class="fa-brands fa-android text-emerald-400 text-sm"></i> Descargar APK (Releases)
@@ -401,7 +404,7 @@
         </div>
     </div>
 
-    <!-- Lógica JavaScript -->
+    <!-- JavaScript Engine -->
     <script>
         const videoElement = document.getElementById('webcam-feed');
         const spatialCursor = document.getElementById('spatial-cursor');
@@ -409,7 +412,7 @@
         const modeText = document.getElementById('mode-text');
 
         let isPinching = false;
-        let localDeviceIP = "192.168.1.50"; // IP dinámica actualizable
+        let localDeviceIP = "192.168.1.50";
 
         function updateLocalIP(newIp) {
             if(newIp) {
@@ -420,7 +423,6 @@
             }
         }
 
-        // MediaPipe Hands
         const hands = new Hands({
             locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}`
         });
@@ -480,7 +482,6 @@
             if (element) element.click();
         }
 
-        // Navegación YouTube
         function searchYouTube() {
             const query = document.getElementById('yt-search-input').value;
             if(query) {
@@ -488,7 +489,6 @@
             }
         }
 
-        // Sistema de Arrastre de Ventanas (Spatial Drag & Drop)
         let activeDrag = null;
         let dragOffsetX = 0, dragOffsetY = 0;
 
@@ -511,7 +511,6 @@
 
         document.addEventListener('mouseup', () => { activeDrag = null; });
 
-        // Gestión de Ventanas Espaciales
         function openApp(appName) {
             const app = document.getElementById(`app-${appName}`);
             if(app) {
@@ -534,7 +533,6 @@
             closeApp('sync');
         }
 
-        // MINIJUEGO SNAKE ESPACIAL
         let snakeCanvas = document.getElementById('snake-canvas');
         let snakeCtx = snakeCanvas ? snakeCanvas.getContext('2d') : null;
         let snake = [{x: 10, y: 10}];
@@ -575,15 +573,12 @@
                 snake.pop();
             }
 
-            // Render
             snakeCtx.fillStyle = '#050508';
             snakeCtx.fillRect(0, 0, 360, 360);
 
-            // Dibujar comida
             snakeCtx.fillStyle = '#f43f5e';
             snakeCtx.fillRect(food.x * 20, food.y * 20, 18, 18);
 
-            // Dibujar serpiente
             snakeCtx.fillStyle = '#38bdf8';
             snake.forEach(part => {
                 snakeCtx.fillRect(part.x * 20, part.y * 20, 18, 18);
@@ -597,7 +592,6 @@
             if(e.key === 'ArrowRight' && dx === 0) { dx = 1; dy = 0; }
         });
 
-        // INTEGRACIÓN DE TWITCH CHAT CONTROL ("Chat Use visionOS")
         function connectTwitchChat() {
             const channel = document.getElementById('twitch-channel-input').value.trim().toLowerCase();
             if(!channel) {
@@ -611,7 +605,6 @@
             const logBox = document.getElementById('twitch-log-box');
             logBox.innerHTML += `<div>[Twitch] Conectado al chat de #${channel}</div>`;
 
-            // Simulación en tiempo real de conexión WebSocket IRC a Twitch Chat público
             const ws = new WebSocket('wss://irc-ws.chat.twitch.tv:443');
 
             ws.onopen = () => {
@@ -631,7 +624,6 @@
                     logBox.innerHTML += `<div><b>${userAndHost}:</b> ${chatText}</div>`;
                     logBox.scrollTop = logBox.scrollHeight;
 
-                    // Procesar comandos del chat para controlar el simulador
                     if (chatText.includes('!youtube') || chatText.includes('!yt')) {
                         openApp('youtube');
                         logBox.innerHTML += `<div class="text-sky-400">[Acción] Chat abrió YouTube</div>`;
