@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modo Espectador — visionOS</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+    <style>
+        body { background-color: #050508; color: #fff; font-family: system-ui, sans-serif; overflow: hidden; }
+        .glass { background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.2); }
+    </style>
+</head>
+<body class="h-screen w-screen flex flex-col items-center justify-center relative">
+    <div class="absolute top-6 left-6 glass px-4 py-2 rounded-full text-xs font-mono text-sky-400 flex items-center gap-2">
+        <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+        Conectado a Transmisión Espacial
+    </div>
+    
+    <div class="text-center space-y-4">
+        <div class="w-24 h-24 rounded-3xl bg-sky-500/10 border border-sky-500/30 flex items-center justify-center text-4xl text-sky-400 mx-auto">
+            <i class="fa-solid fa-tv"></i>
+        </div>
+        <h2 class="text-2xl font-bold">Viendo Sesión en Vivo</h2>
+        <p class="text-xs text-white/50 font-mono">Esperando flujo de renderizado del anfitrión...</p>
+    </div>
+</body>
+</html> 
