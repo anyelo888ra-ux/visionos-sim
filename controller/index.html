@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Controlador Remoto Web — visionOS</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+    <style>
+        body { background-color: #050508; color: #fff; font-family: system-ui, sans-serif; overflow: hidden; }
+        .glass { background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.2); }
+    </style>
+</head>
+<body class="h-screen w-screen flex flex-col items-center justify-between p-6">
+    <div class="glass w-full max-w-md p-4 rounded-2xl flex justify-between items-center text-xs">
+        <span class="text-amber-400 font-bold flex items-center gap-2">
+            <i class="fa-solid fa-gamepad"></i> Control Activo
+        </span>
+        <button onclick="window.location.href='../'" class="text-white/50 hover:text-white">Salir</button>
+    </div>
+
+    <!-- Spatial Trackpad Area -->
+    <div id="trackpad" class="glass w-full max-w-md h-96 rounded-3xl border border-white/20 flex flex-col items-center justify-center text-white/30 space-y-2 cursor-crosshair">
+        <i class="fa-solid fa-hand-pointer text-3xl"></i>
+        <span class="text-xs font-mono">Trackpad Táctil / Gestos Espaciales</span>
+    </div>
+
+    <!-- Accesos Rápida -->
+    <div class="grid grid-cols-4 gap-3 w-full max-w-md">
+        <button class="glass p-3 rounded-2xl text-xs flex flex-col items-center gap-1 hover:bg-white/20">
+            <i class="fa-solid fa-house text-sky-400"></i> Home
+        </button>
+        <button class="glass p-3 rounded-2xl text-xs flex flex-col items-center gap-1 hover:bg-white/20">
+            <i class="fa-brands fa-youtube text-red-400"></i> YouTube
+        </button>
+        <button class="glass p-3 rounded-2xl text-xs flex flex-col items-center gap-1 hover:bg-white/20">
+            <i class="fa-solid fa-gamepad text-emerald-400"></i> Snake
+        </button>
+        <button class="glass p-3 rounded-2xl text-xs flex flex-col items-center gap-1 hover:bg-white/20">
+            <i class="fa-solid fa-gear text-slate-300"></i> Ajustes
+        </button>
+    </div>
+</body>
+</html>
