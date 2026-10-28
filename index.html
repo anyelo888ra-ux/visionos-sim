@@ -9,16 +9,7 @@
     <link rel="apple-touch-icon" href="favicon.svg">
 
     <meta name="title" content="visionOS Web Simulator — Spatial Web Experience">
-    <meta name="description" content="Simulador interactivo de visionOS con Hand Tracking, Teclado Virtual, Chroma Studio, APK Android Remote, Snake Arcade y Twitch Chat Integration.">
-    <meta property="og:type" content="website">
-    <meta property="og:url" content="https://visionos-sim.vercel.app/">
-    <meta property="og:title" content="visionOS Web Simulator — Apple Vision Pro Experience">
-    <meta property="og:description" content="Simulador interactivo de visionOS con Hand Tracking, Teclado Virtual, Chroma Studio y Twitch Chat.">
-    <meta property="og:image" content="banner.svg">
-    <meta property="twitter:card" content="summary_large_image">
-    <meta property="twitter:url" content="https://visionos-sim.vercel.app/">
-    <meta property="twitter:title" content="visionOS Web Simulator — Spatial Web Experience">
-    <meta property="twitter:image" content="banner.svg">
+    <meta name="description" content="Simulador interactivo de visionOS con Hand Tracking, Teclado Virtual, macOS Fake Emulator, Safari, Carpetas y Twitch Chat.">
     
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
@@ -54,12 +45,8 @@
             position: absolute;
         }
 
-        .window-header {
-            cursor: grab;
-        }
-        .window-header:active {
-            cursor: grabbing;
-        }
+        .window-header { cursor: grab; }
+        .window-header:active { cursor: grabbing; }
 
         #spatial-cursor {
             pointer-events: none;
@@ -72,22 +59,29 @@
             box-shadow: 0 0 20px #38bdf8 !important;
         }
 
-        /* Habitación Virtual / Green Screen Background */
         .virtual-room-bg {
             background: radial-gradient(circle at center, #0f172a 0%, #020617 100%),
                         linear-gradient(90deg, rgba(56, 189, 248, 0.05) 1px, transparent 1px),
                         linear-gradient(rgba(56, 189, 248, 0.05) 1px, transparent 1px);
             background-size: 100% 100%, 40px 40px, 40px 40px;
         }
+
+        /* Estilos de Carpetas */
+        .app-folder {
+            border: 2px dashed rgba(255, 255, 255, 0.2);
+            transition: all 0.2s ease;
+        }
+        .app-folder:hover {
+            border-color: #38bdf8;
+            background: rgba(56, 189, 248, 0.1);
+        }
     </style>
 </head>
 <body class="h-screen w-screen relative flex items-center justify-center overflow-hidden">
 
-    <!-- Passthrough & Habitación Virtual -->
     <div id="room-backdrop" class="absolute inset-0 w-full h-full virtual-room-bg hidden z-0 transition-all duration-700"></div>
     <video id="webcam-feed" class="absolute inset-0 w-full h-full object-cover opacity-25 transform -scale-x-100 pointer-events-none z-0" autoplay playsinline muted></video>
     
-    <!-- Cursor Espacial -->
     <div id="spatial-cursor" class="fixed w-8 h-8 rounded-full border-2 border-white/80 bg-white/30 backdrop-blur-md z-50 transform -translate-x-1/2 -translate-y-1/2 flex items-center justify-center shadow-lg">
         <div class="w-2 h-2 rounded-full bg-white"></div>
     </div>
@@ -102,6 +96,10 @@
 
     <!-- Botones Superiores Rápidos -->
     <div class="absolute top-6 right-6 z-40 flex items-center gap-3">
+        <button onclick="createFolderPrompt()" class="vision-glass hover:bg-white/20 transition px-4 py-2 rounded-full text-xs font-semibold flex items-center gap-2 cursor-pointer">
+            <i class="fa-solid fa-folder-plus text-amber-400"></i>
+            <span>Nueva Carpeta</span>
+        </button>
         <button onclick="toggleVirtualKeyboard()" class="vision-glass hover:bg-white/20 transition px-4 py-2 rounded-full text-xs font-semibold flex items-center gap-2 cursor-pointer">
             <i class="fa-solid fa-keyboard text-emerald-400"></i>
             <span>Teclado Virtual</span>
@@ -129,7 +127,7 @@
         </div>
     </div>
 
-    <!-- TECLADO VIRTUAL ESPACIAL FLOTANTE -->
+    <!-- TECLADO VIRTUAL ESPACIAL -->
     <div id="app-keyboard" class="vision-window hidden w-[680px] rounded-3xl z-50 p-4 shadow-2xl border border-white/20 bottom-8 right-8">
         <div class="window-header bg-white/10 px-4 py-2 rounded-2xl flex justify-between items-center mb-3">
             <span class="text-xs font-bold text-emerald-400 flex items-center gap-2">
@@ -138,7 +136,6 @@
             <button onclick="toggleVirtualKeyboard()" class="text-white/60 hover:text-white text-xs"><i class="fa-solid fa-xmark"></i></button>
         </div>
         <div class="grid grid-cols-10 gap-1.5 text-xs font-mono">
-            <!-- Fila 1 -->
             <button onclick="vKey('1')" class="p-3 bg-white/10 hover:bg-sky-500/40 rounded-xl">1</button>
             <button onclick="vKey('2')" class="p-3 bg-white/10 hover:bg-sky-500/40 rounded-xl">2</button>
             <button onclick="vKey('3')" class="p-3 bg-white/10 hover:bg-sky-500/40 rounded-xl">3</button>
@@ -149,8 +146,7 @@
             <button onclick="vKey('8')" class="p-3 bg-white/10 hover:bg-sky-500/40 rounded-xl">8</button>
             <button onclick="vKey('9')" class="p-3 bg-white/10 hover:bg-sky-500/40 rounded-xl">9</button>
             <button onclick="vKey('0')" class="p-3 bg-white/10 hover:bg-sky-500/40 rounded-xl">0</button>
-
-            <!-- Fila 2 -->
+            
             <button onclick="vKey('q')" class="p-3 bg-white/10 hover:bg-sky-500/40 rounded-xl">q</button>
             <button onclick="vKey('w')" class="p-3 bg-white/10 hover:bg-sky-500/40 rounded-xl">w</button>
             <button onclick="vKey('e')" class="p-3 bg-white/10 hover:bg-sky-500/40 rounded-xl">e</button>
@@ -162,7 +158,6 @@
             <button onclick="vKey('o')" class="p-3 bg-white/10 hover:bg-sky-500/40 rounded-xl">o</button>
             <button onclick="vKey('p')" class="p-3 bg-white/10 hover:bg-sky-500/40 rounded-xl">p</button>
 
-            <!-- Fila 3 -->
             <button onclick="vKey('a')" class="p-3 bg-white/10 hover:bg-sky-500/40 rounded-xl">a</button>
             <button onclick="vKey('s')" class="p-3 bg-white/10 hover:bg-sky-500/40 rounded-xl">s</button>
             <button onclick="vKey('d')" class="p-3 bg-white/10 hover:bg-sky-500/40 rounded-xl">d</button>
@@ -174,7 +169,6 @@
             <button onclick="vKey('l')" class="p-3 bg-white/10 hover:bg-sky-500/40 rounded-xl">l</button>
             <button onclick="vBackspace()" class="p-3 bg-rose-500/30 hover:bg-rose-500/60 rounded-xl col-span-1"><i class="fa-solid fa-delete-left"></i></button>
 
-            <!-- Fila 4 -->
             <button onclick="vKey('z')" class="p-3 bg-white/10 hover:bg-sky-500/40 rounded-xl">z</button>
             <button onclick="vKey('x')" class="p-3 bg-white/10 hover:bg-sky-500/40 rounded-xl">x</button>
             <button onclick="vKey('c')" class="p-3 bg-white/10 hover:bg-sky-500/40 rounded-xl">c</button>
@@ -187,14 +181,29 @@
     </div>
 
     <!-- Menú Principal (Home Screen) -->
-    <div id="home-screen" class="vision-glass w-[760px] p-8 rounded-3xl z-30 flex flex-col items-center gap-6 shadow-2xl transition-all duration-300 absolute">
+    <div id="home-screen" class="vision-glass w-[800px] p-8 rounded-3xl z-30 flex flex-col items-center gap-6 shadow-2xl transition-all duration-300 absolute">
         
         <div class="window-header w-full text-center space-y-1 cursor-grab">
             <h1 class="text-3xl font-extrabold tracking-tight text-white/90">visionOS Desktop Simulator</h1>
-            <p class="text-xs text-white/60">Arrastra esta ventana · Control por Hand Tracking, Teclado Virtual, APK o Twitch</p>
+            <p class="text-xs text-white/60">Arrastra apps · Soporta Safari, macOS Fake, Carpetas y Twitch</p>
         </div>
 
-        <div id="app-grid" class="grid grid-cols-4 gap-6 w-full my-2">
+        <div id="app-grid" class="grid grid-cols-5 gap-6 w-full my-2">
+            
+            <button onclick="openApp('safari')" class="flex flex-col items-center gap-2 group cursor-pointer">
+                <div class="w-16 h-16 rounded-2xl bg-gradient-to-tr from-blue-600 to-sky-400 flex items-center justify-center text-2xl shadow-xl group-hover:scale-110 transition-transform">
+                    <i class="fa-solid fa-compass text-white"></i>
+                </div>
+                <span class="text-xs font-medium text-white/80">Safari</span>
+            </button>
+
+            <button onclick="openApp('macos')" class="flex flex-col items-center gap-2 group cursor-pointer">
+                <div class="w-16 h-16 rounded-2xl bg-gradient-to-tr from-slate-800 to-slate-600 flex items-center justify-center text-2xl shadow-xl group-hover:scale-110 transition-transform">
+                    <i class="fa-brands fa-apple text-white"></i>
+                </div>
+                <span class="text-xs font-medium text-white/80">macOS Fake</span>
+            </button>
+
             <button onclick="openApp('invitations')" class="flex flex-col items-center gap-2 group cursor-pointer">
                 <div class="w-16 h-16 rounded-2xl bg-gradient-to-tr from-cyan-500 to-blue-600 flex items-center justify-center text-2xl shadow-xl group-hover:scale-110 transition-transform">
                     <i class="fa-solid fa-paper-plane text-white"></i>
@@ -230,6 +239,13 @@
                 <span class="text-xs font-medium text-white/80">Snake Game</span>
             </button>
 
+            <button onclick="openApp('arcade2048')" class="flex flex-col items-center gap-2 group cursor-pointer">
+                <div class="w-16 h-16 rounded-2xl bg-gradient-to-tr from-amber-500 to-orange-600 flex items-center justify-center text-2xl shadow-xl group-hover:scale-110 transition-transform">
+                    <i class="fa-solid fa-cubes text-white"></i>
+                </div>
+                <span class="text-xs font-medium text-white/80">2048 Arcade</span>
+            </button>
+
             <button onclick="openApp('photos')" class="flex flex-col items-center gap-2 group cursor-pointer">
                 <div class="w-16 h-16 rounded-2xl bg-gradient-to-tr from-amber-500 via-rose-500 to-purple-600 flex items-center justify-center text-2xl shadow-xl group-hover:scale-110 transition-transform">
                     <i class="fa-solid fa-images text-white"></i>
@@ -243,23 +259,123 @@
                 </div>
                 <span class="text-xs font-medium text-white/80">Notas</span>
             </button>
-
-            <button onclick="openApp('appstore')" class="flex flex-col items-center gap-2 group cursor-pointer">
-                <div class="w-16 h-16 rounded-2xl bg-gradient-to-tr from-sky-500 to-indigo-600 flex items-center justify-center text-2xl shadow-xl group-hover:scale-110 transition-transform">
-                    <i class="fa-solid fa-bag-shopping text-white"></i>
-                </div>
-                <span class="text-xs font-medium text-white/80">App Store</span>
-            </button>
         </div>
 
         <div class="text-[11px] font-mono text-white/40 border-t border-white/10 pt-4 w-full text-center">
-            Open Source visionOS Engine · Teclado Virtual & Chroma Room Activos
+            Open Source visionOS Engine · Agrupa Aplicaciones y Crea Carpetas
         </div>
     </div>
 
     <!-- VENTANAS FLOTANTES DE LAS APPS -->
 
-    <!-- APP INVITACIONES / CONTROLLER LINKS -->
+    <!-- 1. SAFARI WEB BROWSER ESPACIAL -->
+    <div id="app-safari" class="vision-window hidden w-[820px] h-[520px] rounded-3xl z-40 flex flex-col overflow-hidden shadow-2xl">
+        <div class="window-header bg-white/10 px-5 py-3 flex justify-between items-center border-b border-white/10">
+            <div class="flex items-center gap-2">
+                <div class="w-3 h-3 rounded-full bg-rose-500 cursor-pointer" onclick="closeApp('safari')"></div>
+                <div class="w-3 h-3 rounded-full bg-amber-500"></div>
+                <div class="w-3 h-3 rounded-full bg-emerald-500"></div>
+            </div>
+            <div class="flex items-center gap-2 bg-black/40 px-3 py-1 rounded-full text-xs text-white/80 w-[450px] border border-white/10">
+                <i class="fa-solid fa-lock text-[10px] text-emerald-400"></i>
+                <input id="safari-url" type="text" value="https://google.com" class="bg-transparent border-none outline-none text-xs w-full text-white font-mono" onfocus="setActiveInput(this)" onkeydown="if(event.key === 'Enter') navigateSafari()">
+                <button onclick="navigateSafari()" class="text-sky-400 hover:text-white"><i class="fa-solid fa-arrow-right"></i></button>
+            </div>
+            <i class="fa-solid fa-compass text-sky-400 text-lg"></i>
+        </div>
+        <div class="flex-grow bg-slate-900 text-white p-6 flex flex-col items-center justify-center space-y-4">
+            <div class="flex items-center gap-3 text-3xl font-bold">
+                <span class="text-blue-400">G</span><span class="text-red-400">o</span><span class="text-yellow-400">o</span><span class="text-blue-400">g</span><span class="text-green-400">l</span><span class="text-red-400">e</span>
+                <span class="text-xs bg-sky-500/20 text-sky-300 border border-sky-500/30 px-2 py-0.5 rounded-full font-mono">Safari visionOS</span>
+            </div>
+            <div class="w-full max-w-md flex items-center bg-slate-800 border border-slate-700 rounded-full px-4 py-2">
+                <i class="fa-solid fa-magnifying-glass text-slate-400 mr-2"></i>
+                <input id="google-search-input" type="text" placeholder="Buscar en la web..." class="bg-transparent border-none outline-none text-xs w-full text-white" onfocus="setActiveInput(this)" onkeydown="if(event.key==='Enter') searchGoogle()">
+            </div>
+            <div class="flex gap-2">
+                <button onclick="searchGoogle()" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-xs rounded-lg border border-slate-700">Buscar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 2. macOS FAKE EMULATOR -->
+    <div id="app-macos" class="vision-window hidden w-[880px] h-[540px] rounded-3xl z-40 flex flex-col overflow-hidden shadow-2xl border border-white/20">
+        <div class="window-header bg-slate-900/90 px-4 py-2 flex justify-between items-center border-b border-white/10 text-xs text-white/80">
+            <div class="flex items-center gap-4">
+                <div class="flex items-center gap-2">
+                    <div class="w-3 h-3 rounded-full bg-rose-500 cursor-pointer" onclick="closeApp('macos')"></div>
+                    <div class="w-3 h-3 rounded-full bg-amber-500"></div>
+                    <div class="w-3 h-3 rounded-full bg-emerald-500"></div>
+                </div>
+                <i class="fa-brands fa-apple text-white"></i>
+                <span class="font-bold">Finder</span>
+                <span class="text-white/50">Archivo</span>
+                <span class="text-white/50">Edición</span>
+                <span class="text-white/50">Ver</span>
+            </div>
+            <span class="font-mono text-[10px] text-sky-400">macOS Ventura Web Engine</span>
+        </div>
+        
+        <!-- Escritorio macOS -->
+        <div class="flex-grow bg-gradient-to-br from-indigo-900 via-purple-900 to-slate-900 relative p-6 flex flex-col justify-between">
+            <!-- Iconos de Escritorio -->
+            <div class="grid grid-cols-1 gap-6 w-20">
+                <div class="flex flex-col items-center gap-1 cursor-pointer">
+                    <i class="fa-solid fa-hard-drive text-amber-400 text-3xl"></i>
+                    <span class="text-[10px] font-mono text-white/80 bg-black/40 px-1 rounded">Macintosh HD</span>
+                </div>
+                <div class="flex flex-col items-center gap-1 cursor-pointer">
+                    <i class="fa-solid fa-folder text-sky-400 text-3xl"></i>
+                    <span class="text-[10px] font-mono text-white/80 bg-black/40 px-1 rounded">Proyectos</span>
+                </div>
+            </div>
+
+            <!-- Dock macOS Abajo -->
+            <div class="mx-auto bg-white/20 backdrop-blur-xl border border-white/30 rounded-2xl px-4 py-2 flex items-center gap-4 shadow-2xl">
+                <i class="fa-solid fa-face-smile text-sky-400 text-2xl hover:scale-125 transition cursor-pointer"></i>
+                <i class="fa-solid fa-compass text-sky-300 text-2xl hover:scale-125 transition cursor-pointer" onclick="openApp('safari')"></i>
+                <i class="fa-solid fa-terminal text-emerald-400 text-2xl hover:scale-125 transition cursor-pointer"></i>
+                <i class="fa-solid fa-gear text-slate-300 text-2xl hover:scale-125 transition cursor-pointer"></i>
+            </div>
+        </div>
+    </div>
+
+    <!-- 3. APP 2048 ARCADE -->
+    <div id="app-arcade2048" class="vision-window hidden w-[480px] h-[480px] rounded-3xl z-40 flex flex-col overflow-hidden shadow-2xl">
+        <div class="window-header bg-white/10 px-5 py-3 flex justify-between items-center border-b border-white/10">
+            <div class="flex items-center gap-2">
+                <div class="w-3 h-3 rounded-full bg-rose-500 cursor-pointer" onclick="closeApp('arcade2048')"></div>
+                <div class="w-3 h-3 rounded-full bg-amber-500"></div>
+                <div class="w-3 h-3 rounded-full bg-emerald-500"></div>
+            </div>
+            <span class="text-xs font-semibold">2048 Arcade Pro</span>
+            <i class="fa-solid fa-cubes text-amber-400"></i>
+        </div>
+        <div class="flex-grow bg-slate-950 p-6 flex flex-col items-center justify-center space-y-4">
+            <div class="text-xl font-extrabold text-amber-400">2048 Spatial</div>
+            <div class="grid grid-cols-4 gap-2 bg-slate-900 p-3 rounded-2xl border border-white/10 w-64 h-64">
+                <div class="bg-amber-500/20 rounded-xl flex items-center justify-center font-bold text-amber-300">2</div>
+                <div class="bg-amber-500/40 rounded-xl flex items-center justify-center font-bold text-amber-200">4</div>
+                <div class="bg-amber-500/60 rounded-xl flex items-center justify-center font-bold text-white">8</div>
+                <div class="bg-amber-600/80 rounded-xl flex items-center justify-center font-bold text-white">16</div>
+                <div class="bg-slate-800 rounded-xl"></div>
+                <div class="bg-slate-800 rounded-xl"></div>
+                <div class="bg-slate-800 rounded-xl"></div>
+                <div class="bg-slate-800 rounded-xl"></div>
+                <div class="bg-slate-800 rounded-xl"></div>
+                <div class="bg-slate-800 rounded-xl"></div>
+                <div class="bg-slate-800 rounded-xl"></div>
+                <div class="bg-slate-800 rounded-xl"></div>
+                <div class="bg-slate-800 rounded-xl"></div>
+                <div class="bg-slate-800 rounded-xl"></div>
+                <div class="bg-slate-800 rounded-xl"></div>
+                <div class="bg-slate-800 rounded-xl"></div>
+            </div>
+            <p class="text-[10px] text-white/50">Presiona las flechas para fusionar bloques</p>
+        </div>
+    </div>
+
+    <!-- OTRAS VENTANAS EXISTENTES -->
     <div id="app-invitations" class="vision-window hidden w-[680px] h-[460px] rounded-3xl z-40 flex flex-col overflow-hidden shadow-2xl">
         <div class="window-header bg-white/10 px-5 py-3 flex justify-between items-center border-b border-white/10">
             <div class="flex items-center gap-2">
@@ -271,11 +387,9 @@
             <i class="fa-solid fa-paper-plane text-cyan-400"></i>
         </div>
         <div class="flex-grow p-6 flex flex-col space-y-4">
-            <p class="text-xs text-white/70">Genera enlaces únicos para invitar a usuarios a controlar o ver tu simulador en tiempo real:</p>
-            
             <div class="space-y-3">
                 <div class="p-3 bg-white/5 border border-white/10 rounded-2xl space-y-2">
-                    <span class="text-xs font-bold text-sky-400">Enlace del Controlador (APK / Mobile Web):</span>
+                    <span class="text-xs font-bold text-sky-400">Enlace del Controlador:</span>
                     <div class="flex gap-2">
                         <input id="link-controller" type="text" readonly class="bg-black/50 border border-white/10 rounded-xl px-3 py-1.5 text-xs text-white font-mono w-full">
                         <button onclick="copyToClipboard('link-controller')" class="bg-sky-600 hover:bg-sky-500 px-3 py-1.5 rounded-xl text-xs font-bold">Copiar</button>
@@ -283,7 +397,7 @@
                 </div>
 
                 <div class="p-3 bg-white/5 border border-white/10 rounded-2xl space-y-2">
-                    <span class="text-xs font-bold text-purple-400">Enlace de Espectador (View Mode):</span>
+                    <span class="text-xs font-bold text-purple-400">Enlace de Espectador:</span>
                     <div class="flex gap-2">
                         <input id="link-view" type="text" readonly class="bg-black/50 border border-white/10 rounded-xl px-3 py-1.5 text-xs text-white font-mono w-full">
                         <button onclick="copyToClipboard('link-view')" class="bg-purple-600 hover:bg-purple-500 px-3 py-1.5 rounded-xl text-xs font-bold">Copiar</button>
@@ -292,12 +406,11 @@
             </div>
 
             <button onclick="generateRandomLinks()" class="mt-auto bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold py-2.5 rounded-xl transition">
-                Regenerar Códigos Aleatorios
+                Regenerar Códigos
             </button>
         </div>
     </div>
 
-    <!-- HABITACIÓN VIRTUAL CHROMA STUDIO -->
     <div id="app-room" class="vision-window hidden w-[600px] h-[400px] rounded-3xl z-40 flex flex-col overflow-hidden shadow-2xl">
         <div class="window-header bg-white/10 px-5 py-3 flex justify-between items-center border-b border-white/10">
             <div class="flex items-center gap-2">
@@ -317,12 +430,8 @@
                 <p class="text-xs text-white/60">Activa la habitación virtual para sumergirte en un espacio 3D con efecto Chroma Key.</p>
             </div>
             <div class="flex gap-3 w-full">
-                <button onclick="toggleRoomMode(true)" class="flex-1 bg-emerald-600 hover:bg-emerald-500 py-2.5 rounded-xl text-xs font-bold">
-                    Activar Habitación Virtual
-                </button>
-                <button onclick="toggleRoomMode(false)" class="flex-1 bg-white/10 hover:bg-white/20 py-2.5 rounded-xl text-xs font-bold">
-                    Passthrough Normal
-                </button>
+                <button onclick="toggleRoomMode(true)" class="flex-1 bg-emerald-600 hover:bg-emerald-500 py-2.5 rounded-xl text-xs font-bold">Activar Habitación</button>
+                <button onclick="toggleRoomMode(false)" class="flex-1 bg-white/10 hover:bg-white/20 py-2.5 rounded-xl text-xs font-bold">Passthrough Normal</button>
             </div>
         </div>
     </div>
@@ -334,9 +443,7 @@
                 <div class="w-3 h-3 rounded-full bg-amber-500"></div>
                 <div class="w-3 h-3 rounded-full bg-emerald-500"></div>
             </div>
-            <div class="bg-black/40 px-4 py-1 rounded-full text-xs text-purple-300 font-mono flex items-center gap-2">
-                <i class="fa-solid fa-robot text-purple-400"></i> https://nexus.ai-nex.duckdns.org/
-            </div>
+            <div class="bg-black/40 px-4 py-1 rounded-full text-xs text-purple-300 font-mono">https://nexus.ai-nex.duckdns.org/</div>
             <i class="fa-solid fa-brain text-purple-400"></i>
         </div>
         <div class="flex-grow w-full h-full bg-black">
@@ -358,8 +465,8 @@
             </div>
             <i class="fa-brands fa-youtube text-red-500 text-lg"></i>
         </div>
-        <div class="flex-grow w-full h-full bg-black flex items-center justify-center" id="yt-container">
-            <iframe id="yt-iframe" src="https://www.youtube.com/embed/jfKfPfyJRdk" class="w-full h-full border-none" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+        <div class="flex-grow w-full h-full bg-black flex items-center justify-center">
+            <iframe id="yt-iframe" src="https://www.youtube.com/embed/jfKfPfyJRdk" class="w-full h-full border-none" allowfullscreen></iframe>
         </div>
     </div>
 
@@ -370,13 +477,12 @@
                 <div class="w-3 h-3 rounded-full bg-amber-500"></div>
                 <div class="w-3 h-3 rounded-full bg-emerald-500"></div>
             </div>
-            <span class="text-xs font-semibold">Snake visionOS (Chat Controlable)</span>
+            <span class="text-xs font-semibold">Snake visionOS</span>
             <i class="fa-solid fa-gamepad text-emerald-400"></i>
         </div>
         <div class="flex-grow bg-black p-4 flex flex-col items-center justify-center relative">
             <div class="absolute top-3 left-4 text-xs font-mono text-emerald-400">Puntuación: <span id="snake-score">0</span></div>
             <canvas id="snake-canvas" width="360" height="360" class="bg-slate-900 border border-white/20 rounded-xl shadow-lg"></canvas>
-            <div class="text-[10px] text-white/50 mt-2">Usa las flechas del teclado o el chat de Twitch (!up, !down, !left, !right)</div>
         </div>
     </div>
 
@@ -394,14 +500,6 @@
             <div class="rounded-2xl bg-gradient-to-br from-purple-600/30 to-blue-600/30 border border-white/10 h-36 flex flex-col items-center justify-center gap-2">
                 <i class="fa-solid fa-cube text-2xl text-amber-400"></i>
                 <span class="text-xs font-mono">Render SM64</span>
-            </div>
-            <div class="rounded-2xl bg-gradient-to-br from-rose-600/30 to-amber-600/30 border border-white/10 h-36 flex flex-col items-center justify-center gap-2">
-                <i class="fa-solid fa-vr-cardboard text-2xl text-sky-400"></i>
-                <span class="text-xs font-mono">Espacio Virtual</span>
-            </div>
-            <div class="rounded-2xl bg-gradient-to-br from-emerald-600/30 to-teal-600/30 border border-white/10 h-36 flex flex-col items-center justify-center gap-2">
-                <i class="fa-solid fa-code text-2xl text-emerald-400"></i>
-                <span class="text-xs font-mono">Code Studio</span>
             </div>
         </div>
     </div>
@@ -421,36 +519,6 @@
         </div>
     </div>
 
-    <div id="app-appstore" class="vision-window hidden w-[680px] h-[440px] rounded-3xl z-40 flex flex-col overflow-hidden shadow-2xl">
-        <div class="window-header bg-white/10 px-5 py-3 flex justify-between items-center border-b border-white/10">
-            <div class="flex items-center gap-2">
-                <div class="w-3 h-3 rounded-full bg-rose-500 cursor-pointer" onclick="closeApp('appstore')"></div>
-                <div class="w-3 h-3 rounded-full bg-amber-500"></div>
-                <div class="w-3 h-3 rounded-full bg-emerald-500"></div>
-            </div>
-            <span class="text-xs font-semibold">visionOS App Store &amp; Play Free</span>
-            <i class="fa-solid fa-bag-shopping text-sky-400"></i>
-        </div>
-        <div class="flex-grow p-6 grid grid-cols-2 gap-4 overflow-y-auto">
-            <div class="p-4 bg-white/5 border border-white/10 rounded-2xl flex flex-col justify-between">
-                <div>
-                    <h4 class="font-bold text-sm">visionOS Controller (APK)</h4>
-                    <p class="text-xs text-white/60">App para Android con Trackpad, Biometría y Wi-Fi/USB.</p>
-                </div>
-                <a href="https://github.com/anyelo888ra-ux/visionos-sim/releases" target="_blank" class="mt-3 bg-emerald-500 text-black text-xs font-bold py-2 rounded-xl text-center flex items-center justify-center gap-1.5">
-                    <i class="fa-brands fa-android"></i> Descargar APK
-                </a>
-            </div>
-            <div class="p-4 bg-white/5 border border-white/10 rounded-2xl flex flex-col justify-between">
-                <div>
-                    <h4 class="font-bold text-sm">Snake Arcade Pro</h4>
-                    <p class="text-xs text-white/60">Juego clásico interactivo por chat.</p>
-                </div>
-                <button onclick="openApp('snake')" class="mt-3 bg-emerald-500 text-black text-xs font-bold py-2 rounded-xl text-center">Jugar Ahora</button>
-            </div>
-        </div>
-    </div>
-
     <div id="app-sync" class="vision-window hidden w-[580px] h-[440px] rounded-3xl z-40 flex flex-col overflow-hidden shadow-2xl">
         <div class="window-header bg-white/10 px-5 py-3 flex justify-between items-center border-b border-white/10">
             <div class="flex items-center gap-2">
@@ -458,32 +526,26 @@
                 <div class="w-3 h-3 rounded-full bg-amber-500"></div>
                 <div class="w-3 h-3 rounded-full bg-emerald-500"></div>
             </div>
-            <span class="text-xs font-semibold">visionOS Controller Sync (Local Dinámico)</span>
+            <span class="text-xs font-semibold">visionOS Controller Sync</span>
             <i class="fa-solid fa-mobile-screen-button text-sky-400"></i>
         </div>
         <div class="flex-grow p-6 flex flex-col items-center justify-between text-center space-y-4">
             <div class="w-16 h-16 rounded-2xl bg-sky-500/20 border border-sky-500/40 flex items-center justify-center text-sky-400 text-3xl">
                 <i class="fa-solid fa-network-wired"></i>
             </div>
-            <div class="space-y-1">
-                <h3 class="font-bold text-sm">Control Remoto por Red Local o USB</h3>
-                <p class="text-xs text-white/60">Introduce la IP local real de tu PC para que la app conecte al vuelo.</p>
-            </div>
             <div class="w-full bg-white/5 border border-white/10 rounded-2xl p-4 space-y-3 text-xs text-left">
                 <div class="flex justify-between items-center">
-                    <span class="text-white/70"><i class="fa-solid fa-wifi text-sky-400 mr-2"></i> IP Local Dinámica:</span>
+                    <span class="text-white/70"><i class="fa-solid fa-wifi text-sky-400 mr-2"></i> IP Local:</span>
                     <input id="modal-ip-input" type="text" value="192.168.1.50" class="bg-black/50 border border-white/20 rounded-lg px-2 py-1 text-emerald-400 font-mono text-xs w-32 outline-none text-center" onfocus="setActiveInput(this)" onchange="updateLocalIP(this.value)">
                 </div>
             </div>
-            <div class="flex gap-3 w-full">
-                <button onclick="simulateSync()" class="flex-1 bg-sky-600 hover:bg-sky-500 text-white font-bold py-2.5 rounded-xl text-xs transition">
-                    Sincronizar IP
-                </button>
-            </div>
+            <button onclick="simulateSync()" class="w-full bg-sky-600 hover:bg-sky-500 text-white font-bold py-2.5 rounded-xl text-xs transition">
+                Sincronizar IP
+            </button>
         </div>
     </div>
 
-    <!-- JavaScript Engine -->
+    <!-- ENGINE JAVASCRIPT -->
     <script>
         const videoElement = document.getElementById('webcam-feed');
         const spatialCursor = document.getElementById('spatial-cursor');
@@ -497,20 +559,46 @@
         function setActiveInput(elem) { activeInput = elem; }
 
         function toggleVirtualKeyboard() {
-            const kb = document.getElementById('app-keyboard');
-            kb.classList.toggle('hidden');
+            document.getElementById('app-keyboard').classList.toggle('hidden');
         }
 
         function vKey(char) {
-            if (activeInput) {
-                activeInput.value += char;
-            }
+            if (activeInput) activeInput.value += char;
         }
 
         function vBackspace() {
-            if (activeInput && activeInput.value.length > 0) {
-                activeInput.value = activeInput.value.slice(0, -1);
+            if (activeInput && activeInput.value.length > 0) activeInput.value = activeInput.value.slice(0, -1);
+        }
+
+        // Sistema de Carpetas
+        function createFolderPrompt() {
+            const folderName = prompt("Nombre para la nueva carpeta:", "Carpeta de Apps");
+            if (folderName) {
+                const grid = document.getElementById('app-grid');
+                const btn = document.createElement('button');
+                btn.className = "flex flex-col items-center gap-2 group cursor-pointer app-folder p-2 rounded-2xl";
+                btn.onclick = () => alert(`Abriendo carpeta: ${folderName}`);
+                btn.innerHTML = `
+                    <div class="w-16 h-16 rounded-2xl bg-white/10 flex flex-wrap p-1.5 gap-1 items-center justify-center shadow-xl group-hover:scale-110 transition-transform">
+                        <div class="w-5 h-5 rounded bg-sky-500/80"></div>
+                        <div class="w-5 h-5 rounded bg-emerald-500/80"></div>
+                        <div class="w-5 h-5 rounded bg-purple-500/80"></div>
+                        <div class="w-5 h-5 rounded bg-amber-500/80"></div>
+                    </div>
+                    <span class="text-xs font-medium text-white/80">${folderName}</span>
+                `;
+                grid.appendChild(btn);
             }
+        }
+
+        function navigateSafari() {
+            const url = document.getElementById('safari-url').value;
+            if(url) window.open(url.startsWith('http') ? url : `https://${url}`, '_blank');
+        }
+
+        function searchGoogle() {
+            const query = document.getElementById('google-search-input').value;
+            if(query) window.open(`https://www.google.com/search?q=${encodeURIComponent(query)}`, '_blank');
         }
 
         function generateRandomLinks() {
@@ -745,23 +833,17 @@
                     logBox.innerHTML += `<div><b>${userAndHost}:</b> ${chatText}</div>`;
                     logBox.scrollTop = logBox.scrollHeight;
 
-                    if (chatText.includes('!youtube') || chatText.includes('!yt')) {
-                        openApp('youtube');
-                    } else if (chatText.includes('!snake')) {
-                        openApp('snake');
-                    } else if (chatText.includes('!notes')) {
-                        openApp('notes');
-                    } else if (chatText.includes('!home')) {
-                        closeApp('youtube'); closeApp('snake'); closeApp('notes'); closeApp('nexus');
-                    } else if (chatText.includes('!up')) {
-                        if(dy === 0) { dx = 0; dy = -1; }
-                    } else if (chatText.includes('!down')) {
-                        if(dy === 0) { dx = 0; dy = 1; }
-                    } else if (chatText.includes('!left')) {
-                        if(dx === 0) { dx = -1; dy = 0; }
-                    } else if (chatText.includes('!right')) {
-                        if(dx === 0) { dx = 1; dy = 0; }
-                    }
+                    if (chatText.includes('!safari')) openApp('safari');
+                    else if (chatText.includes('!macos')) openApp('macos');
+                    else if (chatText.includes('!youtube') || chatText.includes('!yt')) openApp('youtube');
+                    else if (chatText.includes('!snake')) openApp('snake');
+                    else if (chatText.includes('!notes')) openApp('notes');
+                    else if (chatText.includes('!home')) {
+                        closeApp('youtube'); closeApp('snake'); closeApp('notes'); closeApp('nexus'); closeApp('safari'); closeApp('macos');
+                    } else if (chatText.includes('!up')) { if(dy === 0) { dx = 0; dy = -1; } }
+                    else if (chatText.includes('!down')) { if(dy === 0) { dx = 0; dy = 1; } }
+                    else if (chatText.includes('!left')) { if(dx === 0) { dx = -1; dy = 0; } }
+                    else if (chatText.includes('!right')) { if(dx === 0) { dx = 1; dy = 0; } }
                 }
             };
         }
