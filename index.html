@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>visionOS Web Simulator — Apple Vision Pro Experience</title>
+    
+    <!-- Tailwind CSS & FontAwesome -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+    
+    <!-- MediaPipe Hands & Camera Utils para Hand Tracking en vivo -->
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js" crossorigin="anonymous"></script>
+
+    <!-- Sign in with Apple SDK -->
+    <script type="text/javascript" src="https://appleid.cdn-apple.com/appleauth/static/jsapi/appleid/1/en_US/appleid.auth.js"></script>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=SF+Pro+Display:wght@300;400;600;800&family=JetBrains+Mono:wght@400;600&display=swap');
+
+        body {
+            font-family: -apple-system, 'SF Pro Display', BlinkMacSystemFont, sans-serif;
+            background-color: #000;
+            color: #fff;
+            overflow: hidden;
+            user-select: none;
+        }
+
+        /* Glassmorphism visionOS */
+        .vision-glass {
+            background: rgba(255, 255, 255, 0.12);
+            backdrop-filter: blur(25px) saturate(180%);
+            -webkit-backdrop-filter: blur(25px) saturate(180%);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+        }
+
+        /* Cursor / Puntero de Mano Espacial */
+        #spatial-cursor {
+            pointer-events: none;
+            transition: transform 0.05s ease-out, background-color 0.15s ease;
+        }
+
+        .pinched {
+            transform: scale(0.6) !important;
+            background-color: #38bdf8 !important;
+            box-shadow: 0 0 20px #38bdf8 !important;
+        }
+    </style>
+</head>
+<body class="h-screen w-screen relative flex items-center justify-center overflow-hidden">
+
+    <!-- Canvas de Fondo (Video Cam passthrough o Espacio Virtual) -->
+    <video id="webcam-feed" class="absolute inset-0 w-full h-full object-cover opacity-30 transform -scale-x-100 pointer-events-none" autoplay playsinline muted></video>
+    
+    <!-- Canvas Oculto para procesamiento de Hands -->
+    <canvas id="output-canvas" class="hidden"></canvas>
+
+    <!-- Cursor Espacial de Visión (Se mueve con los dedos o la mano fake) -->
+    <div id="spatial-cursor" class="fixed w-8 h-8 rounded-full border-2 border-white/80 bg-white/30 backdrop-blur-md z-50 transform -translate-x-1/2 -translate-y-1/2 flex items-center justify-center shadow-lg">
+        <div class="w-2 h-2 rounded-full bg-white"></div>
+    </div>
+
+    <!-- Puntero / Indicador de Modo de Control -->
+    <div class="absolute top-6 left-6 z-40 flex items-center gap-3">
+        <div id="control-mode-badge" class="vision-glass px-4 py-2 rounded-full text-xs font-semibold flex items-center gap-2">
+            <i id="mode-icon" class="fa-solid fa-spinner animate-spin text-sky-400"></i>
+            <span id="mode-text">Iniciando simulador espacial...</span>
+        </div>
+    </div>
+
+    <!-- Barra de Estado Apple Sync / Login -->
+    <div class="absolute top-6 right-6 z-40 flex items-center gap-3">
+        <button id="apple-login-btn" onclick="initAppleLogin()" class="vision-glass hover:bg-white/20 transition px-4 py-2 rounded-full text-xs font-semibold flex items-center gap-2">
+            <i class="fa-brands fa-apple text-base"></i>
+            <span id="login-text">Conectar iPhone / iPad</span>
+        </button>
+    </div>
+
+    <!-- Menú Principal visionOS (Home Screen) -->
+    <div id="home-window" class="vision-glass w-[650px] p-8 rounded-3xl z-30 flex flex-col items-center gap-6 shadow-2xl transition-all duration-300">
+        
+        <div class="text-center space-y-1">
+            <h1 class="text-3xl font-extrabold tracking-tight text-white/90">visionOS Simulator</h1>
+            <p class="text-xs text-white/60">Haz el gesto de **PINZA** (unir índice y pulgar) o usa clic derecho/izquierdo</p>
+        </div>
+
+        <!-- Rejilla de Apps Espaciales -->
+        <div class="grid grid-cols-4 gap-6 w-full my-4">
+            
+            <button onclick="openApp('Safari')" class="app-icon flex flex-col items-center gap-2 group">
+                <div class="w-16 h-16 rounded-2xl bg-gradient-to-tr from-blue-600 to-sky-400 flex items-center justify-center text-2xl shadow-xl group-hover:scale-110 transition-transform">
+                    <i class="fa-solid fa-compass text-white"></i>
+                </div>
+                <span class="text-xs font-medium text-white/80">Safari</span>
+            </button>
+
+            <button onclick="openApp('Fotos')" class="app-icon flex flex-col items-center gap-2 group">
+                <div class="w-16 h-16 rounded-2xl bg-gradient-to-tr from-amber-500 via-rose-500 to-purple-600 flex items-center justify-center text-2xl shadow-xl group-hover:scale-110 transition-transform">
+                    <i class="fa-solid fa-images text-white"></i>
+                </div>
+                <span class="text-xs font-medium text-white/80">Fotos 3D</span>
+            </button>
+
+            <button onclick="openApp('Ajustes')" class="app-icon flex flex-col items-center gap-2 group">
+                <div class="w-16 h-16 rounded-2xl bg-gradient-to-tr from-slate-600 to-slate-400 flex items-center justify-center text-2xl shadow-xl group-hover:scale-110 transition-transform">
+                    <i class="fa-solid fa-gear text-white"></i>
+                </div>
+                <span class="text-xs font-medium text-white/80">Ajustes</span>
+            </button>
+
+            <button onclick="openApp('Apple Sync')" class="app-icon flex flex-col items-center gap-2 group">
+                <div class="w-16 h-16 rounded-2xl bg-black border border-white/20 flex items-center justify-center text-2xl shadow-xl group-hover:scale-110 transition-transform">
+                    <i class="fa-brands fa-apple text-white"></i>
+                </div>
+                <span class="text-xs font-medium text-white/80">iPhone Sync</span>
+            </button>
+        </div>
+
+        <div class="text-[11px] font-mono text-white/40 border-t border-white/10 pt-4 w-full text-center">
+            PC Desktop Recommended · WebAssembly & Spatial Motion Engine
+        </div>
+    </div>
+
+    <!-- Lógica JavaScript Principal -->
+    <script>
+        const videoElement = document.getElementById('webcam-feed');
+        const spatialCursor = document.getElementById('spatial-cursor');
+        const modeBadge = document.getElementById('control-mode-badge');
+        const modeIcon = document.getElementById('mode-icon');
+        const modeText = document.getElementById('mode-text');
+
+        let isCameraActive = false;
+        let isPinching = false;
+
+        // 1. Inicialización de MediaPipe Hands (Detección de dedos por Cámara)
+        const hands = new Hands({
+            locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}`
+        });
+
+        hands.setOptions({
+            maxNumHands: 1,
+            modelComplexity: 1,
+            minDetectionConfidence: 0.7,
+            minTrackingConfidence: 0.7
+        });
+
+        hands.onResults(onHandResults);
+
+        // Intentar activar cámara
+        navigator.mediaDevices.getUserMedia({ video: { width: 1280, height: 720 } })
+            .then((stream) => {
+                videoElement.srcObject = stream;
+                isCameraActive = true;
+                
+                modeIcon.className = "fa-solid fa-hand text-emerald-400";
+                modeText.textContent = "Hand Tracking Activo (Cámara)";
+
+                const camera = new Camera(videoElement, {
+                    onFrame: async () => {
+                        await hands.send({ image: videoElement });
+                    },
+                    width: 1280,
+                    height: 720
+                });
+                camera.start();
+            })
+            .catch((err) => {
+                // Si el usuario deniega la cámara -> Activar Fake Hand (Mouse)
+                enableFakeHandMode();
+            });
+
+        // Callback cuando se detecta la mano por webcam
+        function onHandResults(results) {
+            if (!results.multiHandLandmarks || results.multiHandLandmarks.length === 0) return;
+
+            const landmarks = results.multiHandLandmarks[0];
+            
+            // Punto 8 (Punta del Índice) y Punto 4 (Punta del Pulgar)
+            const indexTip = landmarks[8];
+            const thumbTip = landmarks[4];
+
+            // Convertir coordenadas normalizadas (0 a 1) a pantalla en PX
+            const cursorX = (1 - indexTip.x) * window.innerWidth; // Espejado
+            const cursorY = indexTip.y * window.innerHeight;
+
+            spatialCursor.style.left = `${cursorX}px`;
+            spatialCursor.style.top = `${cursorY}px`;
+
+            // Calcular distancia para detectar la PINZA (Pinch Gesture)
+            const distance = Math.hypot(
+                (indexTip.x - thumbTip.x),
+                (indexTip.y - thumbTip.y)
+            );
+
+            if (distance < 0.05) { // Umbral de toque de dedos
+                if (!isPinching) {
+                    isPinching = true;
+                    spatialCursor.classList.add('pinched');
+                    triggerSpatialClick(cursorX, cursorY);
+                }
+            } else {
+                isPinching = false;
+                spatialCursor.classList.remove('pinched');
+            }
+        }
+
+        // Modo Mano Virtual / Fake Hand Controlada por Mouse
+        function enableFakeHandMode() {
+            isCameraActive = false;
+            videoElement.classList.add('hidden');
+
+            modeIcon.className = "fa-solid fa-computer-mouse text-sky-400";
+            modeText.textContent = "Modo Mano Virtual (Mouse Fallback)";
+
+            window.addEventListener('mousemove', (e) => {
+                spatialCursor.style.left = `${e.clientX}px`;
+                spatialCursor.style.top = `${e.clientY}px`;
+            });
+
+            window.addEventListener('mousedown', () => {
+                spatialCursor.classList.add('pinched');
+            });
+
+            window.addEventListener('mouseup', () => {
+                spatialCursor.classList.remove('pinched');
+            });
+        }
+
+        // Emular el Clic de Interfaz Espacial
+        function triggerSpatialClick(x, y) {
+            const element = document.elementFromPoint(x, y);
+            if (element) {
+                element.click();
+            }
+        }
+
+        function openApp(appName) {
+            alert(`¡Abriendo aplicación espacial: ${appName}!`);
+        }
+
+        // Login de Apple
+        function initAppleLogin() {
+            AppleID.auth.init({
+                clientId : 'com.simulador.visionos',
+                scope : 'name email',
+                redirectURI: 'https://visionos-sim.vercel.app/auth/callback',
+                usePopup : true
+            });
+
+            AppleID.auth.signIn().then((res) => {
+                document.getElementById('login-text').textContent = "iPhone Sincronizado";
+                alert("¡iPhone vinculado exitosamente al simulador!");
+            }).catch((err) => {
+                // Simulación para entornos de desarrollo
+                document.getElementById('login-text').textContent = "iPhone Conectado (Demo)";
+                alert("Modo Demo: iPhone / iPad listo para usarse como trackpad remoto.");
+            });
+        }
+    </script>
+</body>
+</html>
